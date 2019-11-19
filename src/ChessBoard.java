@@ -1,10 +1,8 @@
-
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
-import java.awt.*;
 import java.util.ArrayList;
 
 public class ChessBoard extends StackPane {
@@ -24,7 +22,7 @@ public class ChessBoard extends StackPane {
     public ChessBoard(int size){
         this.size = size;
         this.cellSize = size / COLUMNS;
-        super.getChildren().add(this.grid);
+        super.getChildren().add(this.background);
         createBoard();
         addPieces();
 
@@ -34,9 +32,9 @@ public class ChessBoard extends StackPane {
      * Create an indexed layer of rectangles over each cell on the board
      * @return  the rectangles
      */
-    private ArrayList<ArrayList<Integer>> createSelections(){
-
-    }
+//    private ArrayList<ArrayList<Integer>> createSelections(){
+//
+//    }
 
     /**
      * Create a blank chess board with no pieces
@@ -67,6 +65,11 @@ public class ChessBoard extends StackPane {
      * Add all chess pieces in default position to the board
      */
     private void addPieces(){
+        for (int column = 0; column < this.board.length; column++){
+            for (int row = 0; row < this.board[column].length; row++){
+
+            }
+        }
     }
 
     /**
