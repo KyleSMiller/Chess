@@ -1,3 +1,5 @@
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
@@ -22,7 +24,10 @@ public class ChessBoard extends StackPane {
     public ChessBoard(int size){
         this.size = size;
         this.cellSize = size / COLUMNS;
+        super.setAlignment(Pos.CENTER);
         super.getChildren().add(this.background);
+        this.background.setPadding(new Insets(5, 5, 5, 5));
+        this.grid.setPadding(new Insets(5, 5, 5, 5));
         createBoard();
         addPieces();
 
