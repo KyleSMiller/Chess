@@ -1,22 +1,33 @@
+
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 
+import java.awt.*;
 import java.util.ArrayList;
 
 public class ChessBoard extends StackPane {
 
     private final int ROWS = 8;
     private final int COLUMNS = 8;
+    // panes and nodes
+    private ChessPiece[][] board = new ChessPiece[COLUMNS][ROWS];
+    private ArrayList<ArrayList<Rectangle>> selections;
+    private GridPane background = new GridPane();
+    private GridPane grid = new GridPane();
+    // sizing variables
     private int size;
     private int cellSize;
 
-    private int[][] board = new int[COLUMNS][ROWS];
-
-
-    GridPane grid = new GridPane();
 
     public ChessBoard(int size){
         this.size = size;
+        this.cellSize = size / COLUMNS;
+        super.getChildren().add(this.grid);
+        createBoard();
+        addPieces();
+
     }
 
     /**
@@ -28,10 +39,34 @@ public class ChessBoard extends StackPane {
     }
 
     /**
-     * Create a chess board with all pieces in starting position
+     * Create a blank chess board with no pieces
      */
     private void createBoard(){
+        // set up the array
+        for (int column = 0; column < this.board.length; column++){
+            for (int row = 0; row < this.board[column].length; row++){
+                this.board[column][row] = null;
+            }
+        }
+        // set up the background
+        for (int column = 0; column < this.board.length; column++){
+            for (int row = 0; row < this.board[column].length; row++){
+                Rectangle cell = new Rectangle(cellSize, cellSize);
+                if((column + row) % 2 == 0){
+                    cell.setFill(Color.WHITE);
+                }
+                else{
+                    cell.setFill(Color.BLACK);
+                }
+                this.background.add(new StackPane(cell), column, row);
+            }
+        }
+    }
 
+    /**
+     * Add all chess pieces in default position to the board
+     */
+    private void addPieces(){
     }
 
     /**
