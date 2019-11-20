@@ -1,3 +1,6 @@
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+
 public abstract class ChessPiece {
 
     private String image;
@@ -10,6 +13,8 @@ public abstract class ChessPiece {
     private int diagonalUp;
     private int diagonalDown;
 
+    private ImageView imageView;
+
     public ChessPiece(String image, int[] position, Color color, int forward, int backwards, int side, int diagonalUp, int diagonalDown){
         this.image = image;
         this.position = position;  // [column, row]
@@ -20,10 +25,16 @@ public abstract class ChessPiece {
         this.side = side;
         this.diagonalUp = diagonalUp;
         this.diagonalDown = diagonalDown;
+
+        imageView = new ImageView(new Image(this.image));
     }
 
     public String getImage(){
         return image;
+    }
+
+    public ImageView getImageView(){
+        return imageView;
     }
 
     public int[] getPosition(){
