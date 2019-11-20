@@ -1,7 +1,9 @@
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
@@ -16,6 +18,7 @@ public class ChessBoard extends StackPane {
     private ArrayList<ArrayList<Rectangle>> selections;
     private GridPane background = new GridPane();
     private GridPane grid = new GridPane();
+    private GridPane selectionGrid = new GridPane();
     // sizing variables
     private int size;
     private int cellSize;
@@ -24,22 +27,47 @@ public class ChessBoard extends StackPane {
     public ChessBoard(int size){
         this.size = size;
         this.cellSize = size / COLUMNS;
-        super.setAlignment(Pos.CENTER);
         super.getChildren().add(this.background);
-        this.background.setPadding(new Insets(5, 5, 5, 5));
-        this.grid.setPadding(new Insets(5, 5, 5, 5));
+        Insets gridPadding = new Insets(5, 5, 5, 5);
+        this.background.setPadding(gridPadding);
+        this.grid.setPadding(gridPadding);
+        this.selectionGrid.setPadding(gridPadding);
         createBoard();
-        addPieces();
 
+        this.selections = createSelections();
+        for(int column = 0; column < COLUMNS; column++){
+            for(int row = 0; row < ROWS; row++){
+                this.selectionGrid.add(selections.get(column).get(row), column, row);
+            }
+        }
+        super.getChildren().add(this.selectionGrid);
+
+        addPieces();
+    }
+
+    public void play(){
+        doHighlight();
+    }
+
+
+    public ArrayList<ArrayList<Rectangle>> getSelections() {
+        return selections;
     }
 
     /**
      * Create an indexed layer of rectangles over each cell on the board
      * @return  the rectangles
      */
-//    private ArrayList<ArrayList<Integer>> createSelections(){
-//
-//    }
+    private ArrayList<ArrayList<Rectangle>> createSelections(){
+        ArrayList<ArrayList<Rectangle>> rects = new ArrayList<>();
+        for (int column = 0; column < this.board.length; column++){
+            rects.add(new ArrayList<>());
+            for (int row = 0; row < this.board[column].length; row++){
+                rects.get(column).add(new Rectangle(this.size / COLUMNS, this.size / ROWS, Color.TRANSPARENT));
+            }
+        }
+        return rects;
+    }
 
     /**
      * Create a blank chess board with no pieces
@@ -56,10 +84,10 @@ public class ChessBoard extends StackPane {
             for (int row = 0; row < this.board[column].length; row++){
                 Rectangle cell = new Rectangle(cellSize, cellSize);
                 if((column + row) % 2 == 0){
-                    cell.setFill(Color.WHITE);
+                    cell.setFill(Color.rgb(209, 201, 167));  // white
                 }
                 else{
-                    cell.setFill(Color.BLACK);
+                    cell.setFill(Color.rgb(33, 23, 1));  // black
                 }
                 this.background.add(new StackPane(cell), column, row);
             }
@@ -83,6 +111,52 @@ public class ChessBoard extends StackPane {
     private void updateBoard(){
 
     }
+
+    /**
+     * Cell highlighting on mouse-over
+     */
+    private void doHighlight(){
+        for (ArrayList<Rectangle> column : this.getSelections()) {
+            for (Rectangle rect : column) {
+                rect.setOnMouseEntered(e -> this.highlightCell(rect));
+                rect.setOnMouseExited(e -> this.removeHighlight(rect));
+            }
+        }
+    }
+
+    /**
+     * Highlight a column on the board
+     * @param rectangle  the selection rectangle to highlight
+     */
+    private void highlightCell(Rectangle rectangle){
+        int col = 0;
+        int row = 0;
+        for(int column = 0; column < selections.size(); column++){
+            if(selections.get(column).contains(rectangle)){
+                col = column;
+                row = selections.get(column).indexOf(rectangle);
+            }
+        }
+        this.selections.get(col).get(row).setFill(Color.WHITE);
+        this.selections.get(col).get(row).setOpacity(0.25);
+    }
+
+    /**
+     * Remove the highlight from a column
+     * @param rectangle  the selection rectangle to make transparent
+     */
+    private void removeHighlight(Rectangle rectangle){//double hoverPosition){
+        int col = 0;
+        int row = 0;
+        for(int column = 0; column < selections.size(); column++){
+            if(selections.get(column).contains(rectangle)){
+                col = column;
+                row = selections.get(column).indexOf(rectangle);
+            }
+        }
+        this.selections.get(col).get(row).setFill(Color.TRANSPARENT);
+    }
+
 
     /**
      * Toggle piece highlighting on mouse-over
