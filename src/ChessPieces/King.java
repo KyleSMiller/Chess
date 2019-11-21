@@ -1,7 +1,7 @@
 public class King extends ChessPiece{
 
     public King(int[] position, Color color){
-        super("temp", position, color, 1, 1, 1, 1, 1);
+        super("https://i.imgur.com/0NJgyIC.png", position, color, 1, 1, 1, 1, 1);
     }
 
     public int[][] getMoves(){
