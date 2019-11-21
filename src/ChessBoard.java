@@ -1,3 +1,10 @@
+import ChessPieces.ChessPiece;
+import ChessPieces.King;
+import ChessPieces.Queen;
+import ChessPieces.Bishop;
+import ChessPieces.Knight;
+import ChessPieces.Rook;
+import ChessPieces.Pawn;
 import javafx.geometry.Insets;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
@@ -102,32 +109,32 @@ public class ChessBoard extends StackPane {
      */
     private void addPieces(){
         // back row of black pieces
-//        this.board[0][0] = new Rook(new int[] {0, 0}, ChessPiece.Color.BLACK);
-//        this.board[1][0] = new Knight(new int[] {1, 0}, ChessPiece.Color.BLACK);
-//        this.board[2][0] = new Bishop(new int[] {2, 0}, ChessPiece.Color.BLACK);
-//        this.board[3][0] = new Queen(new int[] {3, 0}, ChessPiece.Color.BLACK);
+        this.board[0][0] = new Rook(new int[] {0, 0}, ChessPiece.Color.BLACK);
+        this.board[1][0] = new Knight(new int[] {1, 0}, ChessPiece.Color.BLACK);
+        this.board[2][0] = new Bishop(new int[] {2, 0}, ChessPiece.Color.BLACK);
+        this.board[3][0] = new Queen(new int[] {3, 0}, ChessPiece.Color.BLACK);
         this.board[4][0] = new King(new int[] {4, 0}, ChessPiece.Color.BLACK);
-//        this.board[5][0] = new Bishop(new int[] {5, 0}, ChessPiece.Color.BLACK);
-//        this.board[6][0] = new Knight(new int[] {6, 0}, ChessPiece.Color.BLACK);
-//        this.board[7][0] = new Rook(new int[] {7, 0}, ChessPiece.Color.BLACK);
+        this.board[5][0] = new Bishop(new int[] {5, 0}, ChessPiece.Color.BLACK);
+        this.board[6][0] = new Knight(new int[] {6, 0}, ChessPiece.Color.BLACK);
+        this.board[7][0] = new Rook(new int[] {7, 0}, ChessPiece.Color.BLACK);
         // black pawns
-//        for(int column = 0; column < COLUMNS; column++){
-//            this.board[column][ROWS + 1] = new Pawn(new int[] {column, 1}, ChessPiece.Color.BLACK);
-//        }
+        for(int column = 0; column < COLUMNS; column++){
+            this.board[column][ROWS + 1] = new Pawn(new int[] {column, 1}, ChessPiece.Color.BLACK);
+        }
 
         // back row of white pieces
-//        this.board[0][ROWS - 1] = new Rook(new int[] {0, 0}, ChessPiece.Color.WHITE);
-//        this.board[1][ROWS - 1] = new Knight(new int[] {1, 0}, ChessPiece.Color.WHITE);
-//        this.board[2][ROWS - 1] = new Bishop(new int[] {2, 0}, ChessPiece.Color.WHITE);
-//        this.board[3][ROWS - 1] = new Queen(new int[] {3, 0}, ChessPiece.Color.WHITE);
+        this.board[0][ROWS - 1] = new Rook(new int[] {0, 0}, ChessPiece.Color.WHITE);
+        this.board[1][ROWS - 1] = new Knight(new int[] {1, 0}, ChessPiece.Color.WHITE);
+        this.board[2][ROWS - 1] = new Bishop(new int[] {2, 0}, ChessPiece.Color.WHITE);
+        this.board[3][ROWS - 1] = new Queen(new int[] {3, 0}, ChessPiece.Color.WHITE);
         this.board[4][ROWS - 1] = new King(new int[] {4, 0}, ChessPiece.Color.WHITE);
-//        this.board[5][ROWS - 1] = new Bishop(new int[] {5, 0}, ChessPiece.Color.WHITE);
-//        this.board[6][ROWS - 1] = new Knight(new int[] {6, 0}, ChessPiece.Color.WHITE);
-//        this.board[7][ROWS - 1] = new Rook(new int[] {7, 0}, ChessPiece.Color.WHITE);
+        this.board[5][ROWS - 1] = new Bishop(new int[] {5, 0}, ChessPiece.Color.WHITE);
+        this.board[6][ROWS - 1] = new Knight(new int[] {6, 0}, ChessPiece.Color.WHITE);
+        this.board[7][ROWS - 1] = new Rook(new int[] {7, 0}, ChessPiece.Color.WHITE);
         // white pawns
-//        for(int column = 0; column < COLUMNS; column++){
-//            this.board[column][ROWS - 2] = new Pawn(new int[] {column, 1}, ChessPiece.Color.WHITE);
-//        }
+        for(int column = 0; column < COLUMNS; column++){
+            this.board[column][ROWS - 2] = new Pawn(new int[] {column, 1}, ChessPiece.Color.WHITE);
+        }
 
         // display the pieces on the board
         for(int column = 0; column < COLUMNS; column++){

@@ -1,4 +1,6 @@
-public class King extends ChessPiece{
+package ChessPieces;
+
+public class King extends ChessPiece {
 
     public King(int[] position, Color color){
         super("https://i.imgur.com/0NJgyIC.png", position, color, 1, 1, 1, 1, 1);
@@ -35,7 +37,7 @@ public class King extends ChessPiece{
     }
 
     public int[][] getAttacks(){
-        return this.getMoves();  // King can attack in any direction he can move
+        return this.getMoves(); // King can attack in any direction he can move
     }
 
 }
