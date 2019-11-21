@@ -1,9 +1,6 @@
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
@@ -11,13 +8,14 @@ import java.util.ArrayList;
 
 public class ChessBoard extends StackPane {
 
+    // board data
     private final int ROWS = 8;
     private final int COLUMNS = 8;
-    // panes and nodes
     private ChessPiece[][] board = new ChessPiece[COLUMNS][ROWS];
+    // panes and nodes
     private ArrayList<ArrayList<Rectangle>> selections;
     private GridPane background = new GridPane();
-    private GridPane grid = new GridPane();
+    private GridPane pieceGrid = new GridPane();
     private GridPane selectionGrid = new GridPane();
     // sizing variables
     private int size;
@@ -27,13 +25,17 @@ public class ChessBoard extends StackPane {
     public ChessBoard(int size){
         this.size = size;
         this.cellSize = size / COLUMNS;
+
+
+
+        // add the checkered background, piece grid, and selections grid to the pane
         super.getChildren().add(this.background);
         Insets gridPadding = new Insets(5, 5, 5, 5);
         this.background.setPadding(gridPadding);
-        this.grid.setPadding(gridPadding);
+        this.pieceGrid.setPadding(gridPadding);
         this.selectionGrid.setPadding(gridPadding);
-        createBoard();
-
+        super.getChildren().add(pieceGrid);
+        // create the selection rectangles
         this.selections = createSelections();
         for(int column = 0; column < COLUMNS; column++){
             for(int row = 0; row < ROWS; row++){
@@ -42,6 +44,7 @@ public class ChessBoard extends StackPane {
         }
         super.getChildren().add(this.selectionGrid);
 
+        createBoard();
         addPieces();
     }
 
@@ -73,15 +76,11 @@ public class ChessBoard extends StackPane {
      * Create a blank chess board with no pieces
      */
     private void createBoard(){
-        // set up the array
         for (int column = 0; column < this.board.length; column++){
             for (int row = 0; row < this.board[column].length; row++){
+                // set up the array
                 this.board[column][row] = null;
-            }
-        }
-        // set up the background
-        for (int column = 0; column < this.board.length; column++){
-            for (int row = 0; row < this.board[column].length; row++){
+                // set up the background
                 Rectangle cell = new Rectangle(cellSize, cellSize);
                 if((column + row) % 2 == 0){
                     cell.setFill(Color.rgb(209, 201, 167));  // white
@@ -90,6 +89,10 @@ public class ChessBoard extends StackPane {
                     cell.setFill(Color.rgb(33, 23, 1));  // black
                 }
                 this.background.add(new StackPane(cell), column, row);
+                // set up the width of the piece pieceGrid cells
+                Rectangle empty = new Rectangle(cellSize, cellSize);
+                empty.setFill(Color.TRANSPARENT);
+                this.pieceGrid.add(empty, column, row);
             }
         }
     }
@@ -98,9 +101,42 @@ public class ChessBoard extends StackPane {
      * Add all chess pieces in default position to the board
      */
     private void addPieces(){
-        for (int column = 0; column < this.board.length; column++){
-            for (int row = 0; row < this.board[column].length; row++){
+        // back row of black pieces
+//        this.board[0][0] = new Rook(new int[] {0, 0}, ChessPiece.Color.BLACK);
+//        this.board[1][0] = new Knight(new int[] {1, 0}, ChessPiece.Color.BLACK);
+//        this.board[2][0] = new Bishop(new int[] {2, 0}, ChessPiece.Color.BLACK);
+//        this.board[3][0] = new Queen(new int[] {3, 0}, ChessPiece.Color.BLACK);
+        this.board[4][0] = new King(new int[] {4, 0}, ChessPiece.Color.BLACK);
+//        this.board[5][0] = new Bishop(new int[] {5, 0}, ChessPiece.Color.BLACK);
+//        this.board[6][0] = new Knight(new int[] {6, 0}, ChessPiece.Color.BLACK);
+//        this.board[7][0] = new Rook(new int[] {7, 0}, ChessPiece.Color.BLACK);
+        // black pawns
+//        for(int column = 0; column < COLUMNS; column++){
+//            this.board[column][ROWS + 1] = new Pawn(new int[] {column, 1}, ChessPiece.Color.BLACK);
+//        }
 
+        // back row of white pieces
+//        this.board[0][ROWS - 1] = new Rook(new int[] {0, 0}, ChessPiece.Color.WHITE);
+//        this.board[1][ROWS - 1] = new Knight(new int[] {1, 0}, ChessPiece.Color.WHITE);
+//        this.board[2][ROWS - 1] = new Bishop(new int[] {2, 0}, ChessPiece.Color.WHITE);
+//        this.board[3][ROWS - 1] = new Queen(new int[] {3, 0}, ChessPiece.Color.WHITE);
+        this.board[4][ROWS - 1] = new King(new int[] {4, 0}, ChessPiece.Color.WHITE);
+//        this.board[5][ROWS - 1] = new Bishop(new int[] {5, 0}, ChessPiece.Color.WHITE);
+//        this.board[6][ROWS - 1] = new Knight(new int[] {6, 0}, ChessPiece.Color.WHITE);
+//        this.board[7][ROWS - 1] = new Rook(new int[] {7, 0}, ChessPiece.Color.WHITE);
+        // white pawns
+//        for(int column = 0; column < COLUMNS; column++){
+//            this.board[column][ROWS - 2] = new Pawn(new int[] {column, 1}, ChessPiece.Color.WHITE);
+//        }
+
+        // display the pieces on the board
+        for(int column = 0; column < COLUMNS; column++){
+            for(int row = 0; row < ROWS; row++){
+                if(board[column][row] != null){
+                    this.board[column][row].getImageView().setFitHeight(cellSize);
+                    this.board[column][row].getImageView().setFitWidth(cellSize);
+                    pieceGrid.add(board[column][row].getImageView(), column, row);
+                }
             }
         }
     }
@@ -109,7 +145,13 @@ public class ChessBoard extends StackPane {
      * update the visual board to match the array representation of the board
      */
     private void updateBoard(){
-
+        for(int column = 0; column < COLUMNS; column++){
+            for(int row = 0; row < ROWS; row++){
+                if(board[column][row] != null){
+                    pieceGrid.add(board[column][row].getImageView(), column, row);
+                }
+            }
+        }
     }
 
     /**
