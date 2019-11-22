@@ -2,18 +2,33 @@ package ChessPieces;
 
 public class Pawn extends ChessPiece {
 
+    private boolean hasMoved;
+
     public Pawn(int[] position, Color color){
-        super("Pawn image", position, color, 1, 1, 1, 1, 1);
+        super("https://i.imgur.com/0NJgyIC.png", position, color);
+        hasMoved = false;
     }
 
-    public int[][] getMoves(){
-        int[][] moves = new int[8][2];  // [up, down, left, right, leftUp, rightUp, leftDown, rightDown][column, row]
-        return moves;
+    @Override
+    public void setPosition(int[] newPosition){
+        this.hasMoved = true;
+        super.setPosition(newPosition);
     }
 
-    public int[][] getAttacks(){
-        int[][] attacks = new int[8][2];
-        return attacks;
+    public int[] getMoveRange(){
+        // [up, down, left, right, leftUp, rightUp, leftDown, rightDown]
+        int [] startingMoves = new int[] {-2, 0, 0, 0, 0, 0, 0, 0};
+        int[] normalMoves = new int[] {1, 0, 0, 0, 0, 0, 0, 0};
+        if(hasMoved){
+            return normalMoves;
+        }
+        else{
+            return startingMoves;
+        }
+    }
+
+    public int[] getAttackRange(){
+        return new int[] {0, 0, 0, 0, 1, 1, 0, 0};
     }
 
 }

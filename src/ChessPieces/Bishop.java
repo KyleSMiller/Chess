@@ -3,16 +3,15 @@ package ChessPieces;
 public class Bishop extends ChessPiece {
 
     public Bishop(int[] position, Color color){
-        super("Bishop image", position, color, 1, 1, 1, 1, 1);
+        super("https://i.imgur.com/0NJgyIC.png", position, color);
     }
 
-    public int[][] getMoves(){
-        int[][] moves = new int[8][2];  // [up, down, left, right, leftUp, rightUp, leftDown, rightDown][column, row]
-        return moves;
+    public int[] getMoveRange(){
+        return new int[] {0, 0, 0, 0, -1, -1, -1, -1};  // [up, down, left, right, leftUp, rightUp, leftDown, rightDown]
     }
 
-    public int[][] getAttacks(){
-        return this.getMoves();  // Bishop can attack in any direction he can move
+    public int[] getAttackRange(){
+        return this.getMoveRange();  // Bishop can attack in any direction he can move
     }
 
 }

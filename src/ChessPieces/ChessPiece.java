@@ -3,30 +3,20 @@ package ChessPieces;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
+import java.util.ArrayList;
+
 public abstract class ChessPiece {
 
     private String image;
     private int[] position;
     private Color color;
 
-    private int forward;
-    private int backwards;
-    private int side;
-    private int diagonalUp;
-    private int diagonalDown;
-
     private ImageView imageView;
 
-    public ChessPiece(String image, int[] position, Color color, int forward, int backwards, int side, int diagonalUp, int diagonalDown){
+    public ChessPiece(String image, int[] position, Color color){
         this.image = image;
         this.position = position;  // [column, row]
         this.color = color;
-
-        this.forward = forward;
-        this.backwards = backwards;
-        this.side = side;
-        this.diagonalUp = diagonalUp;
-        this.diagonalDown = diagonalDown;
 
         imageView = new ImageView(new Image(this.image));
     }
@@ -47,32 +37,30 @@ public abstract class ChessPiece {
         return color;
     }
 
-    public int getForward() {
-        return forward;
-    }
+    /**
+     * Get the valid moves the piece can make.
+     * Negative indicates that all squares along the path to the end of the move range are valid
+     * -1 indicates infinite range with all squares along the way as valid moves
+     * @return  [up, down, left, right, leftUp, rightUp, leftDown, rightDown] format array
+     */
+    public abstract int[] getMoveRange();
 
-    public int getBackwards() {
-        return backwards;
-    }
+    /**
+     * Get the valid attacks the piece can make.
+     * Negative indicates that all squares along the path to the end of the attack range are valid
+     * -1 indicates infinite range with all squares along the way as valid attacks spaces
+     * @return  [up, down, left, right, leftUp, rightUp, leftDown, rightDown] format array
+     */
+    public abstract int[] getAttackRange();
 
-    public int getSide() {
-        return side;
-    }
-
-    public int getDiagonalUp() {
-        return diagonalUp;
-    }
-
-    public int getDiagonalDown() {
-        return diagonalDown;
-    }
-
-    public abstract int[][] getMoves();
-
-    public abstract int[][] getAttacks();
 
     public void setPosition(int[] newPosition){
         this.position = newPosition;
+    }
+
+    public void setImage(String image){
+        this.image = image;
+        this.imageView = new ImageView(new Image(this.image));
     }
 
     /**
