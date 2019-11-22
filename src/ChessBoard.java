@@ -119,7 +119,7 @@ public class ChessBoard extends StackPane {
         this.board[7][0] = new Rook(new int[] {7, 0}, ChessPiece.Color.BLACK);
         // black pawns
         for(int column = 0; column < COLUMNS; column++){
-            this.board[column][ROWS + 1] = new Pawn(new int[] {column, 1}, ChessPiece.Color.BLACK);
+            this.board[column][1] = new Pawn(new int[] {column, 1}, ChessPiece.Color.BLACK);
         }
 
         // back row of white pieces
