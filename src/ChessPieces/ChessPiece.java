@@ -3,6 +3,8 @@ package ChessPieces;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
+import java.util.ArrayList;
+
 public abstract class ChessPiece {
 
     private String image;
@@ -67,9 +69,9 @@ public abstract class ChessPiece {
         return diagonalDown;
     }
 
-    public abstract int[][] getMoves();
+    public abstract ArrayList<int[]> getMoves();
 
-    public abstract int[][] getAttacks();
+    public abstract ArrayList<int[]> getAttacks();
 
     public void setPosition(int[] newPosition){
         this.position = newPosition;
