@@ -59,20 +59,21 @@ public class Moves {
     private void generateMovesFromDesire(ChessPiece[][] board){
         validMoves = new ArrayList<>();
         validAttacks = new ArrayList<>();
-        for(int column = 0; column < board.length; column++){
-            for(int row = 0; row < board[column].length; row++){
-                for(int i = 0; i < desiredMoves.size(); i++){
 
-                    if(desiredMoves.get(i)[0] == column && desiredMoves.get(i)[1] == row){
-                        if(board[column][row] == null){  // space open
-                            validMoves.add(new int[]{column, row});
-                        }
-                        else if(board[column][row].getColor() != this.color){  // opposite color piece blocking space
-                            this.validAttacks.add(new int[]{column, row});
-                        }
+        for(int i = 0; i < desiredMoves.size(); i++){
+            if (desiredMoves.get(i)[0] >= 0 && desiredMoves.get(i)[0] <= board.length
+                && desiredMoves.get(i)[1] >= 0 && desiredMoves.get(i)[1] < board[0].length
+               ){  // if desired move on board
 
-                    }
+                int column = desiredMoves.get(i)[0];
+                int row = desiredMoves.get(i)[1];
+                if(board[column][row] == null){  // space open
+                    validMoves.add(new int[]{column, row});
                 }
+                else if(board[column][row].getColor() != this.color){  // opposite color piece blocking space
+                    this.validAttacks.add(new int[]{column, row});
+                }
+
             }
         }
     }
