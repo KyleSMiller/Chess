@@ -45,7 +45,7 @@ public abstract class ChessPiece {
         return position;
     }
 
-    public Color color(){
+    public Color getColor(){
         return color;
     }
 
