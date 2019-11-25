@@ -109,11 +109,6 @@ public class ChessBoard extends StackPane {
      * Add all chess pieces in default position to the board
      */
     private void addPieces(){
-//        this.board[4][4] = new Rook(new int[] {4, 4}, ChessPiece.Color.WHITE);
-//        this.board[4][6] = new Rook(new int[]{4, 5}, ChessPiece.Color.BLACK);
-//
-//        this.highlightMoves(this.board[4][4]);
-
         // back row of black pieces
         this.board[0][0] = new Rook(new int[] {0, 0}, ChessPiece.Color.BLACK);
         this.board[1][0] = new Knight(new int[] {1, 0}, ChessPiece.Color.BLACK);
