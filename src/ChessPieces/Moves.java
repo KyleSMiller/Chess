@@ -80,20 +80,45 @@ public class Moves {
 
     /**
      * Generate a list of legal moves from the given position, given a range array
-     * This is easily the ugliest method I have ever written and looking at it causes me physical pain
      * @param board     the chessboard
      * @param position  the position of the piece on the board
      */
     private void generateMovesFromRange(ChessPiece[][] board, int[] position){
         validMoves = new ArrayList<>();
         validAttacks = new ArrayList<>();
-        int range;
         // range array is organized [up, down, side, diagonalUp, diagonalDown]
+        upMoves(board, position);
+        downMoves(board, position);
+        sideMoves(board, position);
+        diagonalUpMoves(board, position);
+        diagonalDownMoves(board, position);
+    }
 
-        // up
+
+
+    /*
+                           -------------------------From this point down-------------------------
+                                        Methods to generate valid moves from a range
+        This is easily one of the messiest collections of methods I have ever made and looking at it causes me physical pain
+                           ----------------------------------------------------------------------
+     */
+
+    /**
+     * Generate the moves a piece can make in the upwards direction
+     * @param board     the chessboard
+     * @param position  the piece's position on the board
+     */
+    private void upMoves(ChessPiece[][] board, int[] position){
+        if(moveRange[0] == 0) return; // skip pieces that cannot move forwards
+
+        int range;
+        final int INFINITE_RANGE = -1;
+
         if(position[1] != 0){  // if not on top edge
             range = this.moveRange[0];
-            if(range == -1) range = Math.abs((board.length + 1) - position[1]);
+            if(range == INFINITE_RANGE) {
+                range = Math.abs((board.length + 1) - position[1]);  // distance to top edge
+            }
             for(int i = 1; i < range; i++){  // start loop at 1 to prevent looking at self
                 if (board[position[0]][position[1] - i] == null) {  // if space open
                     validMoves.add(new int[]{position[0], position[1] - i});
@@ -107,10 +132,25 @@ public class Moves {
                 }
             }
         }
-        // down
+    }
+
+    /**
+     * Generate the moves a piece can make in the downwards direction
+     * @param board     the chessboard
+     * @param position  the piece's position on the board
+     */
+    private void downMoves(ChessPiece[][] board, int[] position){
+        if(moveRange[1] == 0) return;  // skip pieces that cannot move backwards
+
+        int range;
+        final int INFINITE_RANGE = -1;
+
         if(position[1] != board.length){  // if not on bottom edge
             range = this.moveRange[1];
-            if(range == -1) range = Math.abs(position[1] - board.length);
+            if(range == INFINITE_RANGE) {
+                range = Math.abs(position[1] - board.length);  // distance to bottom edge
+            }
+
             for(int i = 1; i < range; i++){  // start loop at 1 to prevent looking at self
                 if (board[position[0]][position[1] + i] == null) {  // if space open
                     validMoves.add(new int[]{position[0], position[1] + i});
@@ -124,11 +164,26 @@ public class Moves {
                 }
             }
         }
+    }
+
+    /**
+     * Generate the moves a piece can make in the side directions
+     * @param board     the chessboard
+     * @param position  the piece's position on the board
+     */
+    private void sideMoves(ChessPiece[][] board, int[] position){
+        if(moveRange[2] == 0) return;  // skip if piece cannot move sideways
+
+        final int INFINITE_RANGE = -1;
+        int range;
 
         // left
         if(position[0] != 0){  // if not on left edge
             range = this.moveRange[2];
-            if(range == -1) range = Math.abs(position[0] - (board.length + 1));
+            if(range == INFINITE_RANGE){
+                range = Math.abs(position[0] - (board.length + 1));  // distance to left edge
+            }
+
             for(int i = 1; i < range; i++){  // start loop at 1 to prevent looking at self
                 if (board[position[0] - i][position[1]] == null) {  // if space open
                     validMoves.add(new int[]{position[0] - i, position[1]});
@@ -145,7 +200,10 @@ public class Moves {
         // right
         if(position[0] != board.length - 1){  // if not on right edge
             range = this.moveRange[2];
-            if(range == -1) range = Math.abs(board.length - position[0]);
+            if(range == INFINITE_RANGE) {
+                range = Math.abs(board.length - position[0]);  // distance to right edge
+            }
+
             for(int i = 1; i < range; i++){  // start loop at 1 to prevent looking at self
                 if (board[position[0] + i][position[1]] == null) {  // if space open
                     validMoves.add(new int[]{position[0] + i, position[1]});
@@ -159,11 +217,28 @@ public class Moves {
                 }
             }
         }
+    }
+
+    /**
+     * Generate the moves a piece can make in the diagonal-up directions
+     * @param board     the chessboard
+     * @param position  the piece's position on the board
+     */
+    private void diagonalUpMoves(ChessPiece[][] board, int[] position){
+        if(moveRange[3] == 0) return; // skip pieces that cannot move diagonal up
+
+        int range;
+        final int INFINITE_RANGE = -1;
 
         // leftUp
         if(position[0] != 0 && position[1] != 0){  // if not on left edge && not on top edge
             range = this.moveRange[3];
-            if(range == -1) range = Math.min(Math.abs((board.length + 1) - position[1]), Math.abs(position[0] - (board.length + 1)));  // min of distance to top and left edge
+            if(range == INFINITE_RANGE) {
+                int distanceToTopEdge = Math.abs((board.length + 1) - position[1]);
+                int distanceToLeftEdge = Math.abs(position[0] - (board.length + 1));
+                range = Math.min(distanceToTopEdge, distanceToLeftEdge);
+            }
+
             for(int i = 0; i < range; i++){
                 if (board[position[0] - i][position[1] - i] == null) {  // if space open
                     validMoves.add(new int[]{position[0] - i, position[1] - i});
@@ -177,7 +252,12 @@ public class Moves {
         // rightUp
         if(position[0] != board.length && position[1] != 0){  // if not on right edge && not on top edge
             range = this.moveRange[3];
-            if(range == -1) range = Math.min(Math.abs((board.length + 1) - position[1]), Math.abs(board.length - position[0]));  // min of distance to top and right edge
+            if(range == INFINITE_RANGE) {
+                int distanceToTopEdge = Math.abs((board.length + 1) - position[1]);
+                int distanceToRightEdge = Math.abs(board.length - position[0]);
+                range = Math.min(distanceToTopEdge, distanceToRightEdge);
+            }
+
             for(int i = 0; i < range; i++){
                 if (board[position[0] + i][position[1] - i] == null) {  // if space open
                     validMoves.add(new int[]{position[0] + i, position[1] - i});
@@ -187,11 +267,28 @@ public class Moves {
                 }
             }
         }
+    }
+
+    /**
+     * Generate the moves a piece can make in the diagonal-up directions
+     * @param board     the chessboard
+     * @param position  the piece's position on the board
+     */
+    private void diagonalDownMoves(ChessPiece[][] board, int[] position){
+        if(moveRange[4] == 0) return; // skip if piece cannot move diagonal down
+
+        int range;
+        final int INFINITE_RANGE = -1;
 
         // leftDown
         if(position[0] != 0 && position[1] != board.length){  // if not on left edge && not on bottom edge
             range = this.moveRange[4];
-            if(range == -1) range = Math.min(Math.abs(position[1] - board.length), Math.abs(position[0] - (board.length + 1)));  // min of distance to bottom and left edge
+            if(range == INFINITE_RANGE) {
+                int distanceToBottomEdge = Math.abs(position[1] - board.length);
+                int distanceToLeftEdge = Math.abs(position[0] - (board.length + 1));
+                range = Math.min(distanceToBottomEdge, distanceToLeftEdge);
+            }
+
             for(int i = 0; i < range; i++){
                 if (board[position[0] - i][position[1] + i] == null) {  // if space open
                     validMoves.add(new int[]{position[0] - i, position[1] + i});
@@ -205,7 +302,12 @@ public class Moves {
         // rightDown
         if(position[0] != board.length && position[1] != board.length){  // if not on right edge && not on bottom edge
             range = this.moveRange[4];
-            if(range == -1) range = Math.min(Math.abs(position[1] - board.length), Math.abs(board.length - position[0]));  // min of distance to bottom and right edge
+            if(range == -1) {
+                int distanceToBottomEdge = Math.abs(position[1] - board.length);
+                int distanceToRightEdge = Math.abs(board.length - position[0]);
+                range = Math.min(distanceToBottomEdge, distanceToRightEdge);
+            }
+
             for(int i = 0; i < range; i++){
                 if (board[position[0] + i][position[1] + i] == null) {  // if space open
                     validMoves.add(new int[]{position[0] + i, position[1] + i});
@@ -215,12 +317,6 @@ public class Moves {
                 }
             }
         }
-
     }
-
-//    private ArrayList<int[]> upMoves(ChessPiece[][] board, int[] position){
-//
-//    }
-
 
 }
