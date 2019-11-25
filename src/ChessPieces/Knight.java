@@ -1,18 +1,38 @@
 package ChessPieces;
 
+import java.util.ArrayList;
+
 public class Knight extends ChessPiece {
 
+    private Moves moves;
+
     public Knight(int[] position, Color color){
-        super("Knight image", position, color, 1, 1, 1, 1, 1);
+        super("https://i.imgur.com/0NJgyIC.png", position, color);
+        moves = new Moves(updateDesiredMoves(), this.getColor());
+
     }
 
-    public int[][] getMoves(){
-        int[][] moves = new int[8][2];  // [up, down, left, right, leftUp, rightUp, leftDown, rightDown][column, row]
-        return moves;
+    public ArrayList<int[]> updateDesiredMoves(){
+        ArrayList<int[]> desiredMoves = new ArrayList<>();
+
+        desiredMoves.add(new int[]{getPosition()[0] + 1, getPosition()[1] + 2});
+        desiredMoves.add(new int[]{getPosition()[0] + 2, getPosition()[1] + 1});
+        desiredMoves.add(new int[]{getPosition()[0] - 1, getPosition()[1] + 2});
+        desiredMoves.add(new int[]{getPosition()[0] - 2, getPosition()[1] + 1});
+        desiredMoves.add(new int[]{getPosition()[0] + 1, getPosition()[1] - 2});
+        desiredMoves.add(new int[]{getPosition()[0] + 2, getPosition()[1] - 1});
+        desiredMoves.add(new int[]{getPosition()[0] - 1, getPosition()[1] - 2});
+        desiredMoves.add(new int[]{getPosition()[0] - 2, getPosition()[1] - 1});
+
+        return desiredMoves;
     }
 
-    public int[][] getAttacks(){
-        return this.getMoves();  // Knight can attack in any direction he can move
+    public ArrayList<int[]> getMoves(ChessPiece[][] board){
+        return moves.getValidMoves(board, getPosition());
+    }
+
+    public ArrayList<int[]> getAttacks(ChessPiece[][] board){
+        return moves.getValidAttacks(board, getPosition());
     }
 
 }

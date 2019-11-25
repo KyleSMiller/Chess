@@ -1,18 +1,23 @@
 package ChessPieces;
 
+import java.util.ArrayList;
+
 public class Bishop extends ChessPiece {
 
+    private Moves moves;
+
     public Bishop(int[] position, Color color){
-        super("Bishop image", position, color, 1, 1, 1, 1, 1);
+        super("https://i.imgur.com/0NJgyIC.png", position, color);
+        moves = new Moves(new int[]{0, 0, 0, -1, -1}, this.getColor());
     }
 
-    public int[][] getMoves(){
-        int[][] moves = new int[8][2];  // [up, down, left, right, leftUp, rightUp, leftDown, rightDown][column, row]
-        return moves;
+    public ArrayList<int[]> getMoves(ChessPiece[][] board){
+        return moves.getValidMoves(board, this.getPosition());
+
     }
 
-    public int[][] getAttacks(){
-        return this.getMoves();  // Bishop can attack in any direction he can move
+    public ArrayList<int[]> getAttacks(ChessPiece[][] board){
+        return moves.getValidAttacks(board, this.getPosition());
     }
 
 }

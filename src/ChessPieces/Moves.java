@@ -19,8 +19,8 @@ public class Moves {
     /**
      * If used, the Moves class will operate as though the piece can always reach the desired location
      * It will only account for pieces already sitting in the desired location and will ignore pieces in the way
-     * EXAMPLE USES: Knight, King
-     * @param moves
+     * EXAMPLE USES: Knight
+     * @param moves  an array of cell coordinates the piece can try to move to
      */
     public Moves(ArrayList<int[]> moves, ChessPiece.Color color){
         this.desiredMoves = moves;
@@ -32,8 +32,8 @@ public class Moves {
     /**
      * If used, the Moves class will operate as though the piece can move in an infinite direction as specified in the range
      * It will account for pieces that block the path when generating valid moves
-     * EXAMPLE USES: Bishop, Rook, Queen, Pawn
-     * @param moveRange
+     * EXAMPLE USES: King, Queen, Bishop, Rook
+     * @param moveRange  array of the range the piece can move in each direction [up, down, side, diagonalUp, diagonalDown]
      */
     public Moves(int[] moveRange, ChessPiece.Color color){
         this.moveRange = moveRange;
@@ -50,6 +50,16 @@ public class Moves {
             this.generateMovesFromRange(board, position);
         }
         return validMoves;
+    }
+
+    public ArrayList<int[]> getValidAttacks(ChessPiece[][] board, int[] position){
+        if(this.moveRange == null) {
+            this.generateMovesFromDesire(board);
+        }
+        else{
+            this.generateMovesFromRange(board, position);
+        }
+        return validAttacks;
     }
 
     public void setDesiredMoves(ArrayList<int[]> desiredMoves){
@@ -117,9 +127,9 @@ public class Moves {
         if(position[1] != 0){  // if not on top edge
             range = this.moveRange[0];
             if(range == INFINITE_RANGE) {
-                range = Math.abs((board.length + 1) - position[1]);  // distance to top edge
+                range = Math.abs(((board.length + 1) - position[1]) - 1);  // distance to top edge
             }
-            for(int i = 1; i < range; i++){  // start loop at 1 to prevent looking at self
+            for(int i = 1; i <= range; i++){  // start loop at 1 to prevent looking at self
                 if (board[position[0]][position[1] - i] == null) {  // if space open
                     validMoves.add(new int[]{position[0], position[1] - i});
                 }
@@ -148,10 +158,10 @@ public class Moves {
         if(position[1] != board.length){  // if not on bottom edge
             range = this.moveRange[1];
             if(range == INFINITE_RANGE) {
-                range = Math.abs(position[1] - board.length);  // distance to bottom edge
+                range = Math.abs((position[1] - board.length) + 1);  // distance to bottom edge
             }
 
-            for(int i = 1; i < range; i++){  // start loop at 1 to prevent looking at self
+            for(int i = 1; i <= range; i++){  // start loop at 1 to prevent looking at self
                 if (board[position[0]][position[1] + i] == null) {  // if space open
                     validMoves.add(new int[]{position[0], position[1] + i});
                 }
@@ -181,10 +191,10 @@ public class Moves {
         if(position[0] != 0){  // if not on left edge
             range = this.moveRange[2];
             if(range == INFINITE_RANGE){
-                range = Math.abs(position[0] - (board.length + 1));  // distance to left edge
+                range = Math.abs((position[0] - (board.length + 1)) + 1);  // distance to left edge
             }
 
-            for(int i = 1; i < range; i++){  // start loop at 1 to prevent looking at self
+            for(int i = 1; i <= range; i++){  // start loop at 1 to prevent looking at self
                 if (board[position[0] - i][position[1]] == null) {  // if space open
                     validMoves.add(new int[]{position[0] - i, position[1]});
                 }
@@ -201,10 +211,10 @@ public class Moves {
         if(position[0] != board.length - 1){  // if not on right edge
             range = this.moveRange[2];
             if(range == INFINITE_RANGE) {
-                range = Math.abs(board.length - position[0]);  // distance to right edge
+                range = Math.abs((board.length - position[0]) - 1);  // distance to right edge
             }
 
-            for(int i = 1; i < range; i++){  // start loop at 1 to prevent looking at self
+            for(int i = 1; i <= range; i++){  // start loop at 1 to prevent looking at self
                 if (board[position[0] + i][position[1]] == null) {  // if space open
                     validMoves.add(new int[]{position[0] + i, position[1]});
                 }
@@ -234,12 +244,12 @@ public class Moves {
         if(position[0] != 0 && position[1] != 0){  // if not on left edge && not on top edge
             range = this.moveRange[3];
             if(range == INFINITE_RANGE) {
-                int distanceToTopEdge = Math.abs((board.length + 1) - position[1]);
-                int distanceToLeftEdge = Math.abs(position[0] - (board.length + 1));
+                int distanceToTopEdge = Math.abs(((board.length + 1) - position[1]) - 1);
+                int distanceToLeftEdge = Math.abs((position[0] - (board.length + 1)) + 1);
                 range = Math.min(distanceToTopEdge, distanceToLeftEdge);
             }
 
-            for(int i = 0; i < range; i++){
+            for(int i = 0; i <= range; i++){
                 if (board[position[0] - i][position[1] - i] == null) {  // if space open
                     validMoves.add(new int[]{position[0] - i, position[1] - i});
                 }
@@ -253,12 +263,12 @@ public class Moves {
         if(position[0] != board.length && position[1] != 0){  // if not on right edge && not on top edge
             range = this.moveRange[3];
             if(range == INFINITE_RANGE) {
-                int distanceToTopEdge = Math.abs((board.length + 1) - position[1]);
-                int distanceToRightEdge = Math.abs(board.length - position[0]);
+                int distanceToTopEdge = Math.abs(((board.length + 1) - position[1]) - 1);
+                int distanceToRightEdge = Math.abs((board.length - position[0]) - 1);
                 range = Math.min(distanceToTopEdge, distanceToRightEdge);
             }
 
-            for(int i = 0; i < range; i++){
+            for(int i = 0; i <= range; i++){
                 if (board[position[0] + i][position[1] - i] == null) {  // if space open
                     validMoves.add(new int[]{position[0] + i, position[1] - i});
                 }
@@ -284,12 +294,12 @@ public class Moves {
         if(position[0] != 0 && position[1] != board.length){  // if not on left edge && not on bottom edge
             range = this.moveRange[4];
             if(range == INFINITE_RANGE) {
-                int distanceToBottomEdge = Math.abs(position[1] - board.length);
-                int distanceToLeftEdge = Math.abs(position[0] - (board.length + 1));
+                int distanceToBottomEdge = Math.abs((position[1] - board.length) + 1);
+                int distanceToLeftEdge = Math.abs((position[0] - (board.length + 1)) + 1);
                 range = Math.min(distanceToBottomEdge, distanceToLeftEdge);
             }
 
-            for(int i = 0; i < range; i++){
+            for(int i = 0; i <= range; i++){
                 if (board[position[0] - i][position[1] + i] == null) {  // if space open
                     validMoves.add(new int[]{position[0] - i, position[1] + i});
                 }
@@ -303,12 +313,12 @@ public class Moves {
         if(position[0] != board.length && position[1] != board.length){  // if not on right edge && not on bottom edge
             range = this.moveRange[4];
             if(range == -1) {
-                int distanceToBottomEdge = Math.abs(position[1] - board.length);
-                int distanceToRightEdge = Math.abs(board.length - position[0]);
+                int distanceToBottomEdge = Math.abs((position[1] - board.length) + 1);
+                int distanceToRightEdge = Math.abs((board.length - position[0]) - 1);
                 range = Math.min(distanceToBottomEdge, distanceToRightEdge);
             }
 
-            for(int i = 0; i < range; i++){
+            for(int i = 0; i <= range; i++){
                 if (board[position[0] + i][position[1] + i] == null) {  // if space open
                     validMoves.add(new int[]{position[0] + i, position[1] + i});
                 }

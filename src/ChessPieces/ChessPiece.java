@@ -11,24 +11,12 @@ public abstract class ChessPiece {
     private int[] position;
     private Color color;
 
-    private int forward;
-    private int backwards;
-    private int side;
-    private int diagonalUp;
-    private int diagonalDown;
-
     private ImageView imageView;
 
-    public ChessPiece(String image, int[] position, Color color, int forward, int backwards, int side, int diagonalUp, int diagonalDown){
+    public ChessPiece(String image, int[] position, Color color){
         this.image = image;
         this.position = position;  // [column, row]
         this.color = color;
-
-        this.forward = forward;
-        this.backwards = backwards;
-        this.side = side;
-        this.diagonalUp = diagonalUp;
-        this.diagonalDown = diagonalDown;
 
         imageView = new ImageView(new Image(this.image));
     }
@@ -49,29 +37,9 @@ public abstract class ChessPiece {
         return color;
     }
 
-    public int getForward() {
-        return forward;
-    }
+    public abstract ArrayList<int[]> getMoves(ChessPiece[][] board);
 
-    public int getBackwards() {
-        return backwards;
-    }
-
-    public int getSide() {
-        return side;
-    }
-
-    public int getDiagonalUp() {
-        return diagonalUp;
-    }
-
-    public int getDiagonalDown() {
-        return diagonalDown;
-    }
-
-    public abstract ArrayList<int[]> getMoves();
-
-    public abstract ArrayList<int[]> getAttacks();
+    public abstract ArrayList<int[]> getAttacks(ChessPiece[][] board);
 
     public void setPosition(int[] newPosition){
         this.position = newPosition;
