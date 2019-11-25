@@ -12,6 +12,12 @@ public class Knight extends ChessPiece {
 
     }
 
+    @Override
+    public void setPosition(int[] position){
+        super.setPosition(position);
+        updateDesiredMoves();
+    }
+
     public ArrayList<int[]> updateDesiredMoves(){
         ArrayList<int[]> desiredMoves = new ArrayList<>();
 
