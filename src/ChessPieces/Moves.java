@@ -42,12 +42,12 @@ public class Moves {
         this.color = color;
     }
 
-    public ArrayList<int[]> getValidMoves(ChessPiece[][] board){
+    public ArrayList<int[]> getValidMoves(ChessPiece[][] board, int[] position){
         if(this.moveRange == null) {
             this.generateMovesFromDesire(board);
         }
         else{
-            this.generateMovesFromRange(board);
+            this.generateMovesFromRange(board, position);
         }
         return validMoves;
     }
@@ -72,14 +72,155 @@ public class Moves {
                 }
                 else if(board[column][row].getColor() != this.color){  // opposite color piece blocking space
                     this.validAttacks.add(new int[]{column, row});
+                    break;
                 }
-
             }
         }
     }
 
-    private void generateMovesFromRange(ChessPiece[][] board){
+    /**
+     * Generate a list of legal moves from the given position, given a range array
+     * This is easily the ugliest method I have ever written and looking at it causes me physical pain
+     * @param board     the chessboard
+     * @param position  the position of the piece on the board
+     */
+    private void generateMovesFromRange(ChessPiece[][] board, int[] position){
+        validMoves = new ArrayList<>();
+        validAttacks = new ArrayList<>();
+        int range;
+        // range array is organized [up, down, side, diagonalUp, diagonalDown]
+
+        // up
+        if(position[1] != 0){  // if not on top edge
+            range = this.moveRange[0];
+            if(range == -1) range = Math.abs((board.length + 1) - position[1]);
+            for(int i = 1; i < range; i++){  // start loop at 1 to prevent looking at self
+                if (board[position[0]][position[1] - i] == null) {  // if space open
+                    validMoves.add(new int[]{position[0], position[1] - i});
+                }
+                else if (board[position[0]][position[1] - i].getColor() != this.color){  // if blocked by enemy piece
+                    validAttacks.add(new int[]{position[0], position[1] - i});
+                    break;
+                }
+                else {  // if blocked by friendly piece
+                    break;
+                }
+            }
+        }
+        // down
+        if(position[1] != board.length){  // if not on bottom edge
+            range = this.moveRange[1];
+            if(range == -1) range = Math.abs(position[1] - board.length);
+            for(int i = 1; i < range; i++){  // start loop at 1 to prevent looking at self
+                if (board[position[0]][position[1] + i] == null) {  // if space open
+                    validMoves.add(new int[]{position[0], position[1] + i});
+                }
+                else if (board[position[0]][position[1] + i].getColor() != this.color){  // if blocked by enemy piece
+                    validAttacks.add(new int[]{position[0], position[1] + i});
+                    break;
+                }
+                else {  // if blocked by friendly piece
+                    break;
+                }
+            }
+        }
+
+        // left
+        if(position[0] != 0){  // if not on left edge
+            range = this.moveRange[2];
+            if(range == -1) range = Math.abs(position[0] - (board.length + 1));
+            for(int i = 1; i < range; i++){  // start loop at 1 to prevent looking at self
+                if (board[position[0] - i][position[1]] == null) {  // if space open
+                    validMoves.add(new int[]{position[0] - i, position[1]});
+                }
+                else if (board[position[0] - i][position[1]].getColor() != this.color){  // if blocked by enemy piece
+                    validAttacks.add(new int[]{position[0] - i, position[1]});
+                    break;
+                }
+                else {  // if blocked by friendly piece
+                    break;
+                }
+            }
+        }
+        // right
+        if(position[0] != board.length - 1){  // if not on right edge
+            range = this.moveRange[2];
+            if(range == -1) range = Math.abs(board.length - position[0]);
+            for(int i = 1; i < range; i++){  // start loop at 1 to prevent looking at self
+                if (board[position[0] + i][position[1]] == null) {  // if space open
+                    validMoves.add(new int[]{position[0] + i, position[1]});
+                }
+                else if (board[position[0] + i][position[1]].getColor() != this.color){  // if blocked by enemy piece
+                    validAttacks.add(new int[]{position[0] + i, position[1]});
+                    break;
+                }
+                else {  // if blocked by friendly piece
+                    break;
+                }
+            }
+        }
+
+        // leftUp
+        if(position[0] != 0 && position[1] != 0){  // if not on left edge && not on top edge
+            range = this.moveRange[3];
+            if(range == -1) range = Math.min(Math.abs((board.length + 1) - position[1]), Math.abs(position[0] - (board.length + 1)));  // min of distance to top and left edge
+            for(int i = 0; i < range; i++){
+                if (board[position[0] - i][position[1] - i] == null) {  // if space open
+                    validMoves.add(new int[]{position[0] - i, position[1] - i});
+                }
+                else if (board[position[0] - i][position[1] - i].getColor() != this.color){  // if blocked by enemy piece
+                    validAttacks.add(new int[]{position[0] - i, position[1] - i});
+                }
+            }
+        }
+
+        // rightUp
+        if(position[0] != board.length && position[1] != 0){  // if not on right edge && not on top edge
+            range = this.moveRange[3];
+            if(range == -1) range = Math.min(Math.abs((board.length + 1) - position[1]), Math.abs(board.length - position[0]));  // min of distance to top and right edge
+            for(int i = 0; i < range; i++){
+                if (board[position[0] + i][position[1] - i] == null) {  // if space open
+                    validMoves.add(new int[]{position[0] + i, position[1] - i});
+                }
+                else if (board[position[0] + i][position[1] - i].getColor() != this.color){  // if blocked by enemy piece
+                    validAttacks.add(new int[]{position[0] + i, position[1] - i});
+                }
+            }
+        }
+
+        // leftDown
+        if(position[0] != 0 && position[1] != board.length){  // if not on left edge && not on bottom edge
+            range = this.moveRange[4];
+            if(range == -1) range = Math.min(Math.abs(position[1] - board.length), Math.abs(position[0] - (board.length + 1)));  // min of distance to bottom and left edge
+            for(int i = 0; i < range; i++){
+                if (board[position[0] - i][position[1] + i] == null) {  // if space open
+                    validMoves.add(new int[]{position[0] - i, position[1] + i});
+                }
+                else if (board[position[0] - i][position[1] + i].getColor() != this.color){  // if blocked by enemy piece
+                    validAttacks.add(new int[]{position[0] - i, position[1] + i});
+                }
+            }
+        }
+
+        // rightDown
+        if(position[0] != board.length && position[1] != board.length){  // if not on right edge && not on bottom edge
+            range = this.moveRange[4];
+            if(range == -1) range = Math.min(Math.abs(position[1] - board.length), Math.abs(board.length - position[0]));  // min of distance to bottom and right edge
+            for(int i = 0; i < range; i++){
+                if (board[position[0] + i][position[1] + i] == null) {  // if space open
+                    validMoves.add(new int[]{position[0] + i, position[1] + i});
+                }
+                else if (board[position[0] + i][position[1] + i].getColor() != this.color){  // if blocked by enemy piece
+                    validAttacks.add(new int[]{position[0] + i, position[1] + i});
+                }
+            }
+        }
 
     }
+
+//    private ArrayList<int[]> upMoves(ChessPiece[][] board, int[] position){
+//
+//    }
+
 
 }
