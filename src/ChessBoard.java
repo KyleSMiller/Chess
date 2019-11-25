@@ -9,6 +9,7 @@ import javafx.geometry.Insets;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 
 import java.util.ArrayList;
@@ -108,6 +109,11 @@ public class ChessBoard extends StackPane {
      * Add all chess pieces in default position to the board
      */
     private void addPieces(){
+//        this.board[4][4] = new Rook(new int[] {4, 4}, ChessPiece.Color.WHITE);
+//        this.board[4][6] = new Rook(new int[]{4, 5}, ChessPiece.Color.BLACK);
+//
+//        this.highlightMoves(this.board[4][4]);
+
         // back row of black pieces
         this.board[0][0] = new Rook(new int[] {0, 0}, ChessPiece.Color.BLACK);
         this.board[1][0] = new Knight(new int[] {1, 0}, ChessPiece.Color.BLACK);
@@ -167,8 +173,9 @@ public class ChessBoard extends StackPane {
     private void doHighlight(){
         for (ArrayList<Rectangle> column : this.getSelections()) {
             for (Rectangle rect : column) {
-                rect.setOnMouseEntered(e -> this.highlightCell(rect));
-                rect.setOnMouseExited(e -> this.removeHighlight(rect));
+                Paint cellColor = rect.getFill();
+                rect.setOnMouseEntered(e -> this.highlightCell(rect, cellColor));
+                rect.setOnMouseExited(e -> this.removeHighlight(rect, cellColor));
             }
         }
     }
@@ -177,7 +184,7 @@ public class ChessBoard extends StackPane {
      * Highlight a column on the board
      * @param rectangle  the selection rectangle to highlight
      */
-    private void highlightCell(Rectangle rectangle){
+    private void highlightCell(Rectangle rectangle, Paint cellColor){
         int col = 0;
         int row = 0;
         for(int column = 0; column < selections.size(); column++){
@@ -186,15 +193,25 @@ public class ChessBoard extends StackPane {
                 row = selections.get(column).indexOf(rectangle);
             }
         }
-        this.selections.get(col).get(row).setFill(Color.WHITE);
-        this.selections.get(col).get(row).setOpacity(0.25);
+        if(cellColor == Color.GREEN){
+            this.selections.get(col).get(row).setFill(Color.rgb(143, 196, 157));
+            this.selections.get(col).get(row).setOpacity(0.25);
+        }
+        if(cellColor == Color.RED) {
+            this.selections.get(col).get(row).setFill(Color.rgb(201, 153, 153));
+            this.selections.get(col).get(row).setOpacity(0.25);
+        }
+        else if (cellColor == Color.TRANSPARENT){
+            this.selections.get(col).get(row).setFill(Color.WHITE);
+            this.selections.get(col).get(row).setOpacity(0.25);
+        }
     }
 
     /**
      * Remove the highlight from a column
      * @param rectangle  the selection rectangle to make transparent
      */
-    private void removeHighlight(Rectangle rectangle){//double hoverPosition){
+    private void removeHighlight(Rectangle rectangle, Paint cellColor){
         int col = 0;
         int row = 0;
         for(int column = 0; column < selections.size(); column++){
@@ -203,7 +220,7 @@ public class ChessBoard extends StackPane {
                 row = selections.get(column).indexOf(rectangle);
             }
         }
-        this.selections.get(col).get(row).setFill(Color.TRANSPARENT);
+        this.selections.get(col).get(row).setFill(cellColor);  // return to original cellColor
     }
 
 
@@ -216,11 +233,20 @@ public class ChessBoard extends StackPane {
     }
 
     /**
-     * Toggle highlighting of possible moves for selected piece
-     * @param highlight  true if highlighting active, false if not
+     * Highlight the possible move and attack squares a piece can legally go to
+     * @param piece  the piece to display the moves of
      */
-    private void doMoveHighlight(boolean highlight){
-
+    private void highlightMoves(ChessPiece piece){
+        ArrayList<int[]> validMoves = piece.getMoves(this.board);
+        ArrayList<int[]> validAttacks = piece.getAttacks(this.board);
+        for(int i = 0; i < validMoves.size(); i++){  // highlight moves
+            this.selections.get(validMoves.get(i)[0]).get(validMoves.get(i)[1]).setFill(Color.GREEN);
+            this.selections.get(validMoves.get(i)[0]).get(validMoves.get(i)[1]).setOpacity(0.25);
+        }
+        for(int i = 0; i < validAttacks.size(); i++){  // highlight attacks
+            this.selections.get(validAttacks.get(i)[0]).get(validAttacks.get(i)[1]).setFill(Color.RED);
+            this.selections.get(validAttacks.get(i)[0]).get(validAttacks.get(i)[1]).setOpacity(0.25);
+        }
     }
 
     /**
