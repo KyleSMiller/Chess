@@ -111,29 +111,29 @@ public class ChessBoard extends StackPane {
      * Add all chess pieces in default position to the board
      */
     private void addPieces(){
-//        // back row of black pieces
-//        this.board[0][0] = new Rook(new int[] {0, 0}, ChessPiece.Color.BLACK);
-//        this.board[1][0] = new Knight(new int[] {1, 0}, ChessPiece.Color.BLACK);
-//        this.board[2][0] = new Bishop(new int[] {2, 0}, ChessPiece.Color.BLACK);
-//        this.board[3][0] = new Queen(new int[] {3, 0}, ChessPiece.Color.BLACK);
-//        this.board[4][0] = new King(new int[] {4, 0}, ChessPiece.Color.BLACK);
-//        this.board[5][0] = new Bishop(new int[] {5, 0}, ChessPiece.Color.BLACK);
-//        this.board[6][0] = new Knight(new int[] {6, 0}, ChessPiece.Color.BLACK);
-//        this.board[7][0] = new Rook(new int[] {7, 0}, ChessPiece.Color.BLACK);
-//        // black pawns
-//        for(int column = 0; column < COLUMNS; column++){
-//            this.board[column][1] = new Pawn(new int[] {column, 1}, ChessPiece.Color.BLACK);
-//        }
+        // back row of black pieces
+        this.board[0][0] = new Rook(new int[] {0, 0}, ChessPiece.Color.BLACK);
+        this.board[1][0] = new Knight(new int[] {1, 0}, ChessPiece.Color.BLACK);
+        this.board[2][0] = new Bishop(new int[] {2, 0}, ChessPiece.Color.BLACK);
+        this.board[3][0] = new Queen(new int[] {3, 0}, ChessPiece.Color.BLACK);
+        this.board[4][0] = new King(new int[] {4, 0}, ChessPiece.Color.BLACK);
+        this.board[5][0] = new Bishop(new int[] {5, 0}, ChessPiece.Color.BLACK);
+        this.board[6][0] = new Knight(new int[] {6, 0}, ChessPiece.Color.BLACK);
+        this.board[7][0] = new Rook(new int[] {7, 0}, ChessPiece.Color.BLACK);
+        // black pawns
+        for(int column = 0; column < COLUMNS; column++){
+            this.board[column][1] = new Pawn(new int[] {column, 1}, ChessPiece.Color.BLACK);
+        }
 
         // back row of white pieces
-        this.board[0][ROWS - 1] = new Rook(new int[] {0, 0}, ChessPiece.Color.WHITE);
-        this.board[1][ROWS - 1] = new Knight(new int[] {1, 0}, ChessPiece.Color.WHITE);
-        this.board[2][ROWS - 1] = new Bishop(new int[] {2, 0}, ChessPiece.Color.WHITE);
-        this.board[3][ROWS - 1] = new Queen(new int[] {3, 0}, ChessPiece.Color.WHITE);
-        this.board[4][ROWS - 1] = new King(new int[] {4, 0}, ChessPiece.Color.WHITE);
-        this.board[5][ROWS - 1] = new Bishop(new int[] {5, 0}, ChessPiece.Color.WHITE);
-        this.board[6][ROWS - 1] = new Knight(new int[] {6, 0}, ChessPiece.Color.WHITE);
-        this.board[7][ROWS - 1] = new Rook(new int[] {7, 0}, ChessPiece.Color.WHITE);
+        this.board[0][ROWS - 1] = new Rook(new int[] {0, ROWS - 1}, ChessPiece.Color.WHITE);
+        this.board[1][ROWS - 1] = new Knight(new int[] {1, ROWS - 1}, ChessPiece.Color.WHITE);
+        this.board[2][ROWS - 1] = new Bishop(new int[] {2, ROWS - 1}, ChessPiece.Color.WHITE);
+        this.board[3][ROWS - 1] = new Queen(new int[] {3, ROWS - 1}, ChessPiece.Color.WHITE);
+        this.board[4][ROWS - 1] = new King(new int[] {4, ROWS - 1}, ChessPiece.Color.WHITE);
+        this.board[5][ROWS - 1] = new Bishop(new int[] {5, ROWS - 1}, ChessPiece.Color.WHITE);
+        this.board[6][ROWS - 1] = new Knight(new int[] {6, ROWS - 1}, ChessPiece.Color.WHITE);
+        this.board[7][ROWS - 1] = new Rook(new int[] {7, ROWS - 1}, ChessPiece.Color.WHITE);
         // white pawns
         for(int column = 0; column < COLUMNS; column++){
             this.board[column][ROWS - 2] = new Pawn(new int[] {column, ROWS - 2}, ChessPiece.Color.WHITE);
@@ -232,11 +232,11 @@ public class ChessBoard extends StackPane {
      */
     private void highlightMoves(ChessPiece piece){
         ArrayList<int[]> validMoves = piece.getMoves(this.board);
-        ArrayList<int[]> validAttacks = piece.getAttacks(this.board);
         for(int i = 0; i < validMoves.size(); i++){  // highlight moves
             this.selections.get(validMoves.get(i)[0]).get(validMoves.get(i)[1]).setFill(Color.GREEN);
             this.selections.get(validMoves.get(i)[0]).get(validMoves.get(i)[1]).setOpacity(0.25);
         }
+        ArrayList<int[]> validAttacks = piece.getAttacks(this.board);
         for(int i = 0; i < validAttacks.size(); i++){  // highlight attacks
             this.selections.get(validAttacks.get(i)[0]).get(validAttacks.get(i)[1]).setFill(Color.RED);
             this.selections.get(validAttacks.get(i)[0]).get(validAttacks.get(i)[1]).setOpacity(0.25);
@@ -261,8 +261,11 @@ public class ChessBoard extends StackPane {
     private void selectPiece(Rectangle cell){
         int[] pieceIndex = getIndex(cell);
         if(board[pieceIndex[0]][pieceIndex[1]] != activePiece){
-            activePiece = board[pieceIndex[0]][pieceIndex[1]];
-            highlightMoves(board[pieceIndex[0]][pieceIndex[1]]);
+            if(board[pieceIndex[0]][pieceIndex[1]] != null) {
+                removeMoveHighlight();
+                activePiece = board[pieceIndex[0]][pieceIndex[1]];
+                highlightMoves(board[pieceIndex[0]][pieceIndex[1]]);
+            }
         }
         else{
             removeMoveHighlight();

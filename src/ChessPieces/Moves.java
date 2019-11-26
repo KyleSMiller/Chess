@@ -137,7 +137,7 @@ public class Moves {
                     validAttacks.add(new int[]{position[0], position[1] - i});
                     break;
                 }
-                else {  // if blocked by friendly piece
+                else if (board[position[0]][position[1] - i].getColor() == this.color){  // if blocked by friendly piece
                     break;
                 }
             }
@@ -169,7 +169,7 @@ public class Moves {
                     validAttacks.add(new int[]{position[0], position[1] + i});
                     break;
                 }
-                else {  // if blocked by friendly piece
+                else if (board[position[0]][position[1] + i].getColor() == this.color){  // if blocked by friendly piece
                     break;
                 }
             }
@@ -202,7 +202,7 @@ public class Moves {
                     validAttacks.add(new int[]{position[0] - i, position[1]});
                     break;
                 }
-                else {  // if blocked by friendly piece
+                else if (board[position[0] - i][position[1]].getColor() == this.color){  // if blocked by friendly piece
                     break;
                 }
             }
@@ -222,7 +222,7 @@ public class Moves {
                     validAttacks.add(new int[]{position[0] + i, position[1]});
                     break;
                 }
-                else {  // if blocked by friendly piece
+                else if (board[position[0] + i][position[1]].getColor() == this.color){  // if blocked by friendly piece
                     break;
                 }
             }
@@ -256,6 +256,9 @@ public class Moves {
                 else if (board[position[0] - i][position[1] - i].getColor() != this.color){  // if blocked by enemy piece
                     validAttacks.add(new int[]{position[0] - i, position[1] - i});
                 }
+                else if (board[position[0] - i][position[1] - i].getColor() == this.color){  // if blocked by friendly piece
+                    break;
+                }
             }
         }
 
@@ -274,6 +277,9 @@ public class Moves {
                 }
                 else if (board[position[0] + i][position[1] - i].getColor() != this.color){  // if blocked by enemy piece
                     validAttacks.add(new int[]{position[0] + i, position[1] - i});
+                }
+                else if (board[position[0] + i][position[1] - i].getColor() == this.color){  // if blocked by friendly piece
+                    break;
                 }
             }
         }
@@ -306,6 +312,9 @@ public class Moves {
                 else if (board[position[0] - i][position[1] + i].getColor() != this.color){  // if blocked by enemy piece
                     validAttacks.add(new int[]{position[0] - i, position[1] + i});
                 }
+                else if (board[position[0] - i][position[1] + i].getColor() == this.color){  // if blocked by friendly piece
+                    break;
+                }
             }
         }
 
@@ -324,6 +333,9 @@ public class Moves {
                 }
                 else if (board[position[0] + i][position[1] + i].getColor() != this.color){  // if blocked by enemy piece
                     validAttacks.add(new int[]{position[0] + i, position[1] + i});
+                }
+                else if (board[position[0] + i][position[1] + i].getColor() == this.color){  // if blocked by friendly piece
+                    break;
                 }
             }
         }
