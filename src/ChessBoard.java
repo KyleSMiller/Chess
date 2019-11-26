@@ -59,7 +59,7 @@ public class ChessBoard extends StackPane {
     }
 
     public void play(){
-        doHighlight();
+        gameLoop();
     }
 
 
@@ -111,19 +111,19 @@ public class ChessBoard extends StackPane {
      * Add all chess pieces in default position to the board
      */
     private void addPieces(){
-        // back row of black pieces
-        this.board[0][0] = new Rook(new int[] {0, 0}, ChessPiece.Color.BLACK);
-        this.board[1][0] = new Knight(new int[] {1, 0}, ChessPiece.Color.BLACK);
-        this.board[2][0] = new Bishop(new int[] {2, 0}, ChessPiece.Color.BLACK);
-        this.board[3][0] = new Queen(new int[] {3, 0}, ChessPiece.Color.BLACK);
-        this.board[4][0] = new King(new int[] {4, 0}, ChessPiece.Color.BLACK);
-        this.board[5][0] = new Bishop(new int[] {5, 0}, ChessPiece.Color.BLACK);
-        this.board[6][0] = new Knight(new int[] {6, 0}, ChessPiece.Color.BLACK);
-        this.board[7][0] = new Rook(new int[] {7, 0}, ChessPiece.Color.BLACK);
-        // black pawns
-        for(int column = 0; column < COLUMNS; column++){
-            this.board[column][1] = new Pawn(new int[] {column, 1}, ChessPiece.Color.BLACK);
-        }
+//        // back row of black pieces
+//        this.board[0][0] = new Rook(new int[] {0, 0}, ChessPiece.Color.BLACK);
+//        this.board[1][0] = new Knight(new int[] {1, 0}, ChessPiece.Color.BLACK);
+//        this.board[2][0] = new Bishop(new int[] {2, 0}, ChessPiece.Color.BLACK);
+//        this.board[3][0] = new Queen(new int[] {3, 0}, ChessPiece.Color.BLACK);
+//        this.board[4][0] = new King(new int[] {4, 0}, ChessPiece.Color.BLACK);
+//        this.board[5][0] = new Bishop(new int[] {5, 0}, ChessPiece.Color.BLACK);
+//        this.board[6][0] = new Knight(new int[] {6, 0}, ChessPiece.Color.BLACK);
+//        this.board[7][0] = new Rook(new int[] {7, 0}, ChessPiece.Color.BLACK);
+//        // black pawns
+//        for(int column = 0; column < COLUMNS; column++){
+//            this.board[column][1] = new Pawn(new int[] {column, 1}, ChessPiece.Color.BLACK);
+//        }
 
         // back row of white pieces
         this.board[0][ROWS - 1] = new Rook(new int[] {0, 0}, ChessPiece.Color.WHITE);
@@ -136,7 +136,7 @@ public class ChessBoard extends StackPane {
         this.board[7][ROWS - 1] = new Rook(new int[] {7, 0}, ChessPiece.Color.WHITE);
         // white pawns
         for(int column = 0; column < COLUMNS; column++){
-            this.board[column][ROWS - 2] = new Pawn(new int[] {column, 1}, ChessPiece.Color.WHITE);
+            this.board[column][ROWS - 2] = new Pawn(new int[] {column, ROWS - 2}, ChessPiece.Color.WHITE);
         }
 
         // display the pieces on the board
@@ -171,6 +171,7 @@ public class ChessBoard extends StackPane {
         for (ArrayList<Rectangle> column : this.getSelections()) {
             for (Rectangle rect : column) {
                 Paint cellColor = rect.getFill();
+                // System.out.println(cellColor);
                 rect.setOnMouseEntered(e -> this.highlightCell(rect, cellColor));
                 rect.setOnMouseExited(e -> this.removeHighlight(rect, cellColor));
             }
@@ -258,19 +259,14 @@ public class ChessBoard extends StackPane {
      * @param cell  the selections rectangle that shares the cell with the piece to select
      */
     private void selectPiece(Rectangle cell){
-        for (ArrayList<Rectangle> column : this.getSelections()){
-            for (Rectangle rect : column){
-                rect.setOnMouseClicked(e -> {
-                    int[] pieceIndex = getIndex(cell);
-                    if(board[pieceIndex[0]][pieceIndex[1]] != activePiece){
-                        activePiece = board[pieceIndex[0]][pieceIndex[1]];
-                    }
-                    else{
-                        removeMoveHighlight();
-                        activePiece = null;
-                    }
-                });
-            }
+        int[] pieceIndex = getIndex(cell);
+        if(board[pieceIndex[0]][pieceIndex[1]] != activePiece){
+            activePiece = board[pieceIndex[0]][pieceIndex[1]];
+            highlightMoves(board[pieceIndex[0]][pieceIndex[1]]);
+        }
+        else{
+            removeMoveHighlight();
+            activePiece = null;
         }
     }
 
@@ -278,7 +274,7 @@ public class ChessBoard extends StackPane {
      * Get the index of a cell on the board
      * Allows getting the index of cells that are clicked on or hovered over
      * @param selectionRect  the selectionsRectangle that shares the space on the board with the desired index
-     * @return
+     * @return  the index of the cell
      */
     private int[] getIndex(Rectangle selectionRect){
         int col = 0;
@@ -297,7 +293,15 @@ public class ChessBoard extends StackPane {
      * Wait for a Mouse event and perform the according action on the board
      */
     private void gameLoop(){
-
+        doHighlight();
+        for (ArrayList<Rectangle> column : this.getSelections()){
+            for (Rectangle rect : column){
+                rect.setOnMousePressed(e -> selectPiece(rect));
+            }
+        }
+//        if(activePiece != null) {
+//            highlightMoves(activePiece);
+//        }
     }
 
 }
