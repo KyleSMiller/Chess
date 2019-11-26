@@ -127,7 +127,7 @@ public class Moves {
         if(position[1] != 0){  // if not on top edge
             range = this.moveRange[0];
             if(range == INFINITE_RANGE) {
-                range = Math.abs(((board.length + 1) - position[1]) - 1);  // distance to top edge
+                range = position[1];  // distance to top edge
             }
             for(int i = 1; i <= range; i++){  // start loop at 1 to prevent looking at self
                 if (board[position[0]][position[1] - i] == null) {  // if space open
@@ -158,7 +158,7 @@ public class Moves {
         if(position[1] != board.length - 1){  // if not on bottom edge
             range = this.moveRange[1];
             if(range == INFINITE_RANGE) {
-                range = Math.abs((position[1] - board.length) + 1);  // distance to bottom edge
+                range = Math.abs((board.length - 1)- position[1]);  // distance to bottom edge
             }
 
             for(int i = 1; i <= range; i++){  // start loop at 1 to prevent looking at self
@@ -191,7 +191,7 @@ public class Moves {
         if(position[0] != 0){  // if not on left edge
             range = this.moveRange[2];
             if(range == INFINITE_RANGE){
-                range = Math.abs((position[0] - (board.length + 1)) + 1);  // distance to left edge
+                range = position[0];  // distance to left edge
             }
 
             for(int i = 1; i <= range; i++){  // start loop at 1 to prevent looking at self
@@ -211,7 +211,7 @@ public class Moves {
         if(position[0] != board.length - 1){  // if not on right edge
             range = this.moveRange[2];
             if(range == INFINITE_RANGE) {
-                range = Math.abs((board.length - position[0]) - 1);  // distance to right edge
+                range = Math.abs((board.length - 1) - position[0]);  // distance to right edge
             }
 
             for(int i = 1; i <= range; i++){  // start loop at 1 to prevent looking at self
@@ -244,8 +244,8 @@ public class Moves {
         if(position[0] != 0 && position[1] != 0){  // if not on left edge && not on top edge
             range = this.moveRange[3];
             if(range == INFINITE_RANGE) {
-                int distanceToTopEdge = Math.abs(((board.length + 1) - position[1]) - 1);
-                int distanceToLeftEdge = Math.abs((position[0] - (board.length + 1)) + 1);
+                int distanceToTopEdge = position[1];
+                int distanceToLeftEdge = position[0];
                 range = Math.min(distanceToTopEdge, distanceToLeftEdge);
             }
 
@@ -263,8 +263,8 @@ public class Moves {
         if(position[0] != board.length - 1 && position[1] != 0){  // if not on right edge && not on top edge
             range = this.moveRange[3];
             if(range == INFINITE_RANGE) {
-                int distanceToTopEdge = Math.abs(((board.length + 1) - position[1]) - 1);
-                int distanceToRightEdge = Math.abs((board.length - position[0]) - 1);
+                int distanceToTopEdge = position[1];
+                int distanceToRightEdge = Math.abs((board.length - 1)- position[0]);
                 range = Math.min(distanceToTopEdge, distanceToRightEdge);
             }
 
@@ -294,8 +294,8 @@ public class Moves {
         if(position[0] != 0 && position[1] != board.length - 1){  // if not on left edge && not on bottom edge
             range = this.moveRange[4];
             if(range == INFINITE_RANGE) {
-                int distanceToBottomEdge = Math.abs((position[1] - board.length) + 1);
-                int distanceToLeftEdge = Math.abs((position[0] - (board.length + 1)) + 1);
+                int distanceToBottomEdge = Math.abs((board.length - 1)- position[1]);
+                int distanceToLeftEdge = position[0];
                 range = Math.min(distanceToBottomEdge, distanceToLeftEdge);
             }
 
@@ -313,8 +313,8 @@ public class Moves {
         if(position[0] != board.length - 1 && position[1] != board.length - 1){  // if not on right edge && not on bottom edge
             range = this.moveRange[4];
             if(range == -1) {
-                int distanceToBottomEdge = Math.abs((position[1] - board.length) + 1);
-                int distanceToRightEdge = Math.abs((board.length - position[0]) - 1);
+                int distanceToBottomEdge = Math.abs((board.length - 1)- position[1]);
+                int distanceToRightEdge = Math.abs((board.length - 1)- position[0]);
                 range = Math.min(distanceToBottomEdge, distanceToRightEdge);
             }
 
