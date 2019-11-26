@@ -164,16 +164,20 @@ public class ChessBoard extends StackPane {
         }
     }
 
+    private Paint cellColor;  // because of lambda limitations, cellColor must be a member variable. I know, it hurts me too
     /**
      * Cell highlighting on mouse-over
      */
     private void doHighlight(){
         for (ArrayList<Rectangle> column : this.getSelections()) {
             for (Rectangle rect : column) {
-                Paint cellColor = rect.getFill();
-                // System.out.println(cellColor);
-                rect.setOnMouseEntered(e -> this.highlightCell(rect, cellColor));
-                rect.setOnMouseExited(e -> this.removeHighlight(rect, cellColor));
+                rect.setOnMouseEntered(e -> {
+                    cellColor = rect.getFill();
+                    this.highlightCell(rect, cellColor);
+                });
+                rect.setOnMouseExited(e -> {
+                    this.removeHighlight(rect, cellColor);
+                });
             }
         }
     }
@@ -302,9 +306,6 @@ public class ChessBoard extends StackPane {
                 rect.setOnMousePressed(e -> selectPiece(rect));
             }
         }
-//        if(activePiece != null) {
-//            highlightMoves(activePiece);
-//        }
     }
 
 }
