@@ -155,7 +155,7 @@ public class Moves {
         int range;
         final int INFINITE_RANGE = -1;
 
-        if(position[1] != board.length){  // if not on bottom edge
+        if(position[1] != board.length - 1){  // if not on bottom edge
             range = this.moveRange[1];
             if(range == INFINITE_RANGE) {
                 range = Math.abs((position[1] - board.length) + 1);  // distance to bottom edge
@@ -291,7 +291,7 @@ public class Moves {
         final int INFINITE_RANGE = -1;
 
         // leftDown
-        if(position[0] != 0 && position[1] != board.length){  // if not on left edge && not on bottom edge
+        if(position[0] != 0 && position[1] != board.length - 1){  // if not on left edge && not on bottom edge
             range = this.moveRange[4];
             if(range == INFINITE_RANGE) {
                 int distanceToBottomEdge = Math.abs((position[1] - board.length) + 1);
@@ -310,7 +310,7 @@ public class Moves {
         }
 
         // rightDown
-        if(position[0] != board.length && position[1] != board.length){  // if not on right edge && not on bottom edge
+        if(position[0] != board.length - 1 && position[1] != board.length - 1){  // if not on right edge && not on bottom edge
             range = this.moveRange[4];
             if(range == -1) {
                 int distanceToBottomEdge = Math.abs((position[1] - board.length) + 1);
