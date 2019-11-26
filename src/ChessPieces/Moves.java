@@ -260,7 +260,7 @@ public class Moves {
         }
 
         // rightUp
-        if(position[0] != board.length && position[1] != 0){  // if not on right edge && not on top edge
+        if(position[0] != board.length - 1 && position[1] != 0){  // if not on right edge && not on top edge
             range = this.moveRange[3];
             if(range == INFINITE_RANGE) {
                 int distanceToTopEdge = Math.abs(((board.length + 1) - position[1]) - 1);
