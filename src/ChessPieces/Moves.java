@@ -71,7 +71,7 @@ public class Moves {
         validAttacks = new ArrayList<>();
 
         for(int i = 0; i < desiredMoves.size(); i++){
-            if (desiredMoves.get(i)[0] >= 0 && desiredMoves.get(i)[0] <= board.length
+            if (desiredMoves.get(i)[0] >= 0 && desiredMoves.get(i)[0] < board.length
                 && desiredMoves.get(i)[1] >= 0 && desiredMoves.get(i)[1] < board[0].length
                ){  // if desired move on board
 
