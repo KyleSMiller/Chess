@@ -29,6 +29,8 @@ public class ChessBoard extends StackPane {
     private int size;
     private int cellSize;
 
+    private ChessPiece activePiece;
+
 
     public ChessBoard(int size){
         this.size = size;
@@ -180,14 +182,10 @@ public class ChessBoard extends StackPane {
      * @param rectangle  the selection rectangle to highlight
      */
     private void highlightCell(Rectangle rectangle, Paint cellColor){
-        int col = 0;
-        int row = 0;
-        for(int column = 0; column < selections.size(); column++){
-            if(selections.get(column).contains(rectangle)){
-                col = column;
-                row = selections.get(column).indexOf(rectangle);
-            }
-        }
+        int[] index = getIndex(rectangle);
+        int col = index[0];
+        int row = index[1];
+
         if(cellColor == Color.GREEN){
             this.selections.get(col).get(row).setFill(Color.rgb(143, 196, 157));
             this.selections.get(col).get(row).setOpacity(0.25);
@@ -245,12 +243,53 @@ public class ChessBoard extends StackPane {
     }
 
     /**
-     * Select a piece in a given cell
-     * @param column  the column of the piece
-     * @param row     the row of the piece
+     * Remove the valid move highlights from the board
      */
-    private void selectPiece(int column, int row){
+    private void removeMoveHighlight(){
+        for(ArrayList<Rectangle> column : selections){
+            for(Rectangle rect : column){
+                rect.setFill(Color.TRANSPARENT);
+            }
+        }
+    }
 
+    /**
+     * Select a piece in a given cell
+     * @param cell  the selections rectangle that shares the cell with the piece to select
+     */
+    private void selectPiece(Rectangle cell){
+        for (ArrayList<Rectangle> column : this.getSelections()){
+            for (Rectangle rect : column){
+                rect.setOnMouseClicked(e -> {
+                    int[] pieceIndex = getIndex(cell);
+                    if(board[pieceIndex[0]][pieceIndex[1]] != activePiece){
+                        activePiece = board[pieceIndex[0]][pieceIndex[1]];
+                    }
+                    else{
+                        removeMoveHighlight();
+                        activePiece = null;
+                    }
+                });
+            }
+        }
+    }
+
+    /**
+     * Get the index of a cell on the board
+     * Allows getting the index of cells that are clicked on or hovered over
+     * @param selectionRect  the selectionsRectangle that shares the space on the board with the desired index
+     * @return
+     */
+    private int[] getIndex(Rectangle selectionRect){
+        int col = 0;
+        int row = 0;
+        for(int i = 0; i < selections.size(); i++){
+            if(selections.get(i).contains(selectionRect)){
+                col = i;
+                row = selections.get(col).indexOf(selectionRect);
+            }
+        }
+        return new int[]{col, row};
     }
 
 
