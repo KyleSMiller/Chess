@@ -25,6 +25,23 @@ public class ChatServer {
     public void runServer(){
         try {
             sv = new ServerSocket(port);
+            Socket s = sv.accept();
+
+            DataInputStream din = new DataInputStream(s.getInputStream());
+            DataOutputStream dout = new DataOutputStream(s.getOutputStream());
+            BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+
+            String msgin = "", msgout = "";
+
+            while(!msgin.equals("end")){
+                msgin = din.readUTF();
+                System.out.println(msgin);
+                msgout = br.readLine();
+                dout.writeUTF(msgout);
+                dout.flush();
+            }
+
+
         } catch (Exception e){
             System.out.println("Port taken, please try a different port");
         }
@@ -50,27 +67,23 @@ public class ChatServer {
     }
 
     private void readMessage() {
-        new Thread(() -> {
-            try {
-                response = rd.readLine().trim();
-                System.out.println("From Client: " + response);
-            } catch (IOException e) {
-                System.out.println("failed to read message");
-            }
-        });
+        try {
+            response = rd.readLine().trim();
+            System.out.println("From Client: " + response);
+        } catch (IOException e) {
+            System.out.println("failed to read message");
+        }
     }
 
     private void sendMessage() {
-        new Thread(() -> {
-            try {
-                System.out.print("> ");
-                message = scanner.nextLine();
-                wr.write(message + "\r\n");
-                wr.flush();
-            } catch (IOException e){
-                System.out.println("failed to send message");
-            }
-        });
+        try {
+            System.out.print("> ");
+            message = scanner.nextLine();
+            wr.write(message + "\r\n");
+            wr.flush();
+        } catch (IOException e){
+            System.out.println("failed to send message");
+        }
     }
 
 }
