@@ -2,6 +2,7 @@ package Chat;
 
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
@@ -17,6 +18,7 @@ public class ChatWindow extends BorderPane {
     private TextField msgField = new TextField();
     // private ArrayList<Label> messageLabels = new ArrayList<>();
     private VBox messageVbox = new VBox();
+    ScrollPane messagePane = new ScrollPane();
 
     public ChatWindow(int width, int height){
         this.width = width;
@@ -27,10 +29,12 @@ public class ChatWindow extends BorderPane {
         msgField.setText("");
         msgField.setPadding(new Insets(5, 5, 5, 5));
 
+        messagePane.setContent(messageVbox);
+
         super.setPadding(new Insets(5, 5, 5, 0));
         super.setWidth(this.width);
         super.setHeight(this.height);
-        super.setCenter(messageVbox);
+        super.setCenter(messagePane);
         super.setBottom(bottomStack);
     }
 
@@ -43,7 +47,7 @@ public class ChatWindow extends BorderPane {
         });
     }
 
-    private void addUserMessage(String user, String message){
+    public void addUserMessage(String user, String message){
         this.messages.add(user + ": " + message);
 //        messageLabels.add(new Label(user + ": " + message));
     }
@@ -51,7 +55,10 @@ public class ChatWindow extends BorderPane {
     private void updateMessages(){
         messageVbox.getChildren().clear();
         for(String msg : messages) {
-            messageVbox.getChildren().add(new Label(msg));
+            Label message = new Label(msg);
+            message.setMaxWidth(width - 52);  // magic number, I know. It's late and I'm tired. Sue me
+            message.setWrapText(true);
+            messageVbox.getChildren().add(message);
         }
     }
 
