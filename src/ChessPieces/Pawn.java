@@ -24,6 +24,9 @@ public class Pawn extends ChessPiece {
         }
     }
 
+    public String toString(){
+        return "Pawn at (" + getPosition()[0] + ", " + getPosition()[1] + ")";
+    }
 
     @Override
     public void setPosition(int[] newPosition){

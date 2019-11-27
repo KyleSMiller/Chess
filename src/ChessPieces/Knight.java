@@ -12,6 +12,10 @@ public class Knight extends ChessPiece {
 
     }
 
+    public String toString(){
+        return "Knight at (" + getPosition()[0] + ", " + getPosition()[1] + ")";
+    }
+
     @Override
     public void setPosition(int[] position){
         super.setPosition(position);

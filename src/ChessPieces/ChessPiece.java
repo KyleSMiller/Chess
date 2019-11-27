@@ -21,6 +21,8 @@ public abstract class ChessPiece {
         imageView = new ImageView(new Image(this.image));
     }
 
+    public abstract String toString();
+
     public String getImage(){
         return image;
     }

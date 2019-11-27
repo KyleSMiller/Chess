@@ -11,6 +11,10 @@ public class Queen extends ChessPiece {
         moves = new Moves(new int[]{-1, -1, -1, -1, -1}, this.getColor());
     }
 
+    public String toString(){
+        return "Queen at (" + getPosition()[0] + ", " + getPosition()[1] + ")";
+    }
+
     public ArrayList<int[]> getMoves(ChessPiece[][] board){
         return moves.getValidMoves(board, this.getPosition());
     }
