@@ -82,7 +82,6 @@ public class Moves {
                 }
                 else if(board[column][row].getColor() != this.color){  // opposite color piece blocking space
                     this.validAttacks.add(new int[]{column, row});
-                    break;
                 }
             }
         }

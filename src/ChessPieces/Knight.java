@@ -19,7 +19,7 @@ public class Knight extends ChessPiece {
     @Override
     public void setPosition(int[] position){
         super.setPosition(position);
-        updateDesiredMoves();
+        moves = new Moves(updateDesiredMoves(), this.getColor());
     }
 
     public ArrayList<int[]> updateDesiredMoves(){
