@@ -25,23 +25,6 @@ public class ChatServer {
     public void runServer(){
         try {
             sv = new ServerSocket(port);
-            Socket s = sv.accept();
-
-            DataInputStream din = new DataInputStream(s.getInputStream());
-            DataOutputStream dout = new DataOutputStream(s.getOutputStream());
-            BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-
-            String msgin = "", msgout = "";
-
-            while(!msgin.equals("end")){
-                msgin = din.readUTF();
-                System.out.println(msgin);
-                msgout = br.readLine();
-                dout.writeUTF(msgout);
-                dout.flush();
-            }
-
-
         } catch (Exception e){
             System.out.println("Port taken, please try a different port");
         }

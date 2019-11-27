@@ -22,26 +22,18 @@ public class ChatClient {
 
     public void runServer(){
         try {
-            socket = new Socket("192.169.0.16", port);
-//            rd = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-//            wr = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-//            scanner = new Scanner(System.in);
-
-            DataInputStream din = new DataInputStream(socket.getInputStream());
-            DataOutputStream dout = new DataOutputStream(socket.getOutputStream());
-            BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-            String msgin = "", msgout = "";
-            while(!msgin.equals("end")){
-                msgout = br.readLine();
-                dout.writeUTF(msgout);
-                msgin = din.readUTF();
-                System.out.println(msgin);
-            }
-
+            socket = new Socket("192.168.0.16", port);
+            rd = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            wr = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+            scanner = new Scanner(System.in);
         } catch (Exception e){
             System.out.println("ERROR: Cannot connect to host");
         }
 
+        while(true){
+            sendMessage();
+            readMessage();
+        }
     }
 
     private void readMessage() {
