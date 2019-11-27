@@ -5,17 +5,12 @@ import ChessPieces.Bishop;
 import ChessPieces.Knight;
 import ChessPieces.Rook;
 import ChessPieces.Pawn;
-import javafx.animation.PathTransition;
-import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
-import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
-import javafx.util.Duration;
 
 import java.util.ArrayList;
 
@@ -33,16 +28,20 @@ public class ChessBoard extends StackPane {
     // sizing variables
     private int size;
     private int cellSize;
-
+    // active game data
     private ChessPiece activePiece = null;
     private ArrayList<int[]> validMoves = new ArrayList<>();
+    private boolean whiteTurn = true;
+    private boolean isWhite;
 
-
-    public ChessBoard(int size){
+    /**
+     * Create a new chessboard
+     * @param size  the size in pixels of the board
+     * @param team  true to pick white team, false to pick black
+     */
+    public ChessBoard(int size, boolean team){
         this.size = size;
         this.cellSize = size / COLUMNS;
-
-
 
         // add the checkered background, piece grid, and selections grid to the pane
         super.getChildren().add(this.background);
@@ -62,6 +61,8 @@ public class ChessBoard extends StackPane {
 
         createBoard();
         addPieces();
+
+        isWhite = team;
     }
 
     public void play(){
@@ -273,21 +274,24 @@ public class ChessBoard extends StackPane {
      * Select a piece in a given cell
      * @param cell  the selections rectangle that shares the cell with the piece to select
      */
-    private void selectPiece(Rectangle cell){
+    private void selectPiece(Rectangle cell) {
         int[] pieceIndex = getIndex(cell);
-        if(board[pieceIndex[0]][pieceIndex[1]] != activePiece){
-            if(board[pieceIndex[0]][pieceIndex[1]] != null) {
-                removeMoveHighlight();
-                activePiece = board[pieceIndex[0]][pieceIndex[1]];
-                highlightMoves(board[pieceIndex[0]][pieceIndex[1]]);
-            }
-        }
-        else{
-            removeMoveHighlight();
-            activePiece = null;
-        }
-        // System.out.println("Selected " + activePiece);
+        ChessPiece piece = board[pieceIndex[0]][pieceIndex[1]];
+        if(piece == null) return;
 
+        if (piece.getColor() == ChessPiece.Color.WHITE && isWhite
+            || piece.getColor() == ChessPiece.Color.BLACK && !isWhite) {
+            if (piece != activePiece) {
+                removeMoveHighlight();
+                activePiece = piece;
+                highlightMoves(piece);
+            } else {
+                removeMoveHighlight();
+                activePiece = null;
+            }
+            // System.out.println("Selected " + activePiece);
+
+        }
     }
 
     /**
@@ -314,7 +318,6 @@ public class ChessBoard extends StackPane {
      * @return          true if valid, false if not
      */
     private boolean canMove(ChessPiece piece, int[] position){
-        // System.out.println("Piece at (" + piece.getPosition()[0] + ", " + piece.getPosition()[1] + ") wants to move to (" + position[0] + ", " + position[1] + ")");
         for(int[] pos : validMoves){
             if((position[0] == piece.getPosition()[0] && position[1] == piece.getPosition()[1])){
                 return false;
@@ -374,7 +377,6 @@ public class ChessBoard extends StackPane {
      */
     private void gameLoop(){
         doHighlight();
-        super.setOnMouseClicked(e -> System.out.println("Mouse at (" + e.getSceneX() + ", " + e.getSceneY() + ")"));
         for (ArrayList<Rectangle> column : this.getSelections()){
             for (Rectangle rect : column){
                 int[] position = getIndex(rect);

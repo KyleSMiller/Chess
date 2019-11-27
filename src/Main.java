@@ -12,7 +12,7 @@ public class Main extends Application {
 
         primaryStage.setResizable(false);
 
-        ChessBoard chessBoard = new ChessBoard(500);
+        ChessBoard chessBoard = new ChessBoard(500, true);
         chessBoard.play();
 
         Scene scene = new Scene(chessBoard);
