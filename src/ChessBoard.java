@@ -5,12 +5,16 @@ import ChessPieces.Bishop;
 import ChessPieces.Knight;
 import ChessPieces.Rook;
 import ChessPieces.Pawn;
+import javafx.animation.PathTransition;
+import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
+import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
+import javafx.util.Duration;
 
 import java.util.ArrayList;
 
@@ -29,7 +33,8 @@ public class ChessBoard extends StackPane {
     private int size;
     private int cellSize;
 
-    private ChessPiece activePiece;
+    private ChessPiece activePiece = null;
+    private ArrayList<int[]> validMoves = new ArrayList<>();
 
 
     public ChessBoard(int size){
@@ -158,6 +163,7 @@ public class ChessBoard extends StackPane {
         for(int column = 0; column < COLUMNS; column++){
             for(int row = 0; row < ROWS; row++){
                 if(board[column][row] != null){
+                    pieceGrid.getChildren().remove(board[column][row].getImageView());
                     pieceGrid.add(board[column][row].getImageView(), column, row);
                 }
             }
@@ -245,6 +251,10 @@ public class ChessBoard extends StackPane {
             this.selections.get(validAttacks.get(i)[0]).get(validAttacks.get(i)[1]).setFill(Color.RED);
             this.selections.get(validAttacks.get(i)[0]).get(validAttacks.get(i)[1]).setOpacity(0.25);
         }
+
+        this.validMoves = validMoves;
+        this.validMoves.addAll(validAttacks);
+
     }
 
     /**
@@ -275,6 +285,8 @@ public class ChessBoard extends StackPane {
             removeMoveHighlight();
             activePiece = null;
         }
+        System.out.println(activePiece);
+
     }
 
     /**
@@ -295,6 +307,58 @@ public class ChessBoard extends StackPane {
         return new int[]{col, row};
     }
 
+    /**
+     * Check if the position the user chose to move is a valid space to move
+     * @param position  the desired position
+     * @return          true if valid, false if not
+     */
+    private boolean canMove(ChessPiece piece, int[] position){
+        // System.out.println("Piece at (" + piece.getPosition()[0] + ", " + piece.getPosition()[1] + ") wants to move to (" + position[0] + ", " + position[1] + ")");
+        for(int[] pos : validMoves){
+            if((position[0] == piece.getPosition()[0] && position[1] == piece.getPosition()[1])){
+                return false;
+            }
+            if((position[0] == pos[0] && position[1] == pos[1])){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Move a piece on the board to another cell
+     * @param piece          the piece to move
+     * @param endPosition    the new position to move to
+     */
+    private void movePiece(ChessPiece piece, int[] endPosition){
+        if(piece == null) return;
+        if(!canMove(piece, endPosition)) return;
+        int[] startPosition = piece.getPosition();
+
+        // get center coordinates of the start and ending cell
+        Bounds center1 = selections.get(startPosition[0]).get(startPosition[1]).getBoundsInParent();
+        Bounds center2 = selections.get(endPosition[0]).get(endPosition[1]).getBoundsInParent();
+
+        // create animation path for the piece
+        PathTransition path = new PathTransition();
+        path.setDuration(new Duration(1000));
+        path.setPath(new Line(center1.getCenterX(), center1.getCenterY(), center2.getCenterX(), center2.getCenterY()));
+        path.setNode(piece.getImageView());
+
+        if(board[endPosition[0]][endPosition[1]] != null){  // if space occupied
+            board[endPosition[0]][endPosition[1]].fadeOut();
+            board[endPosition[0]][endPosition[1]] = null;
+        }
+        board[endPosition[0]][endPosition[1]] = piece;
+        System.out.println("board (" + endPosition[0] + ", " + endPosition[1] + ") holds " + board[endPosition[0]][endPosition[1]]);
+        piece.setPosition(new int[]{endPosition[0], endPosition[1]});
+        board[startPosition[0]][startPosition[1]] = null;
+//        path.play();
+        updateBoard();
+        removeMoveHighlight();
+    }
+
+
 
     /**
      * Wait for a Mouse event and perform the according action on the board
@@ -303,7 +367,11 @@ public class ChessBoard extends StackPane {
         doHighlight();
         for (ArrayList<Rectangle> column : this.getSelections()){
             for (Rectangle rect : column){
-                rect.setOnMousePressed(e -> selectPiece(rect));
+                int[] position = getIndex(rect);
+                rect.setOnMousePressed(e -> movePiece(activePiece, position));
+                if(board[position[0]][position[1]] != null) {
+                    rect.setOnMousePressed(e -> selectPiece(rect));
+                }
             }
         }
     }
