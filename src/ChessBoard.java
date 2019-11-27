@@ -331,6 +331,7 @@ public class ChessBoard extends StackPane {
      * @param endPosition    the new position to move to
      */
     private void movePiece(ChessPiece piece, int[] endPosition){
+        System.out.println("trying to move");
         if(piece == null) return;
         if(!canMove(piece, endPosition)) return;
         int[] startPosition = piece.getPosition();
@@ -350,8 +351,9 @@ public class ChessBoard extends StackPane {
             board[endPosition[0]][endPosition[1]] = null;
         }
         board[endPosition[0]][endPosition[1]] = piece;
-        System.out.println("board (" + endPosition[0] + ", " + endPosition[1] + ") holds " + board[endPosition[0]][endPosition[1]]);
+        //  System.out.println("board (" + endPosition[0] + ", " + endPosition[1] + ") holds " + board[endPosition[0]][endPosition[1]]);
         piece.setPosition(new int[]{endPosition[0], endPosition[1]});
+        // System.out.println("piece is now at (" + piece.getPosition()[0] + ", " + piece.getPosition()[1] + ")");
         board[startPosition[0]][startPosition[1]] = null;
 //        path.play();
         updateBoard();
@@ -368,10 +370,11 @@ public class ChessBoard extends StackPane {
         for (ArrayList<Rectangle> column : this.getSelections()){
             for (Rectangle rect : column){
                 int[] position = getIndex(rect);
-                rect.setOnMousePressed(e -> movePiece(activePiece, position));
-                if(board[position[0]][position[1]] != null) {
-                    rect.setOnMousePressed(e -> selectPiece(rect));
-                }
+                // rect.setOnMousePressed(e -> movePiece(activePiece, position));
+                rect.setOnMousePressed(e -> {
+                    movePiece(activePiece, position);
+                    selectPiece(rect);
+                });
             }
         }
     }
