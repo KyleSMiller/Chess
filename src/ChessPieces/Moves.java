@@ -249,7 +249,7 @@ public class Moves {
                 range = Math.min(distanceToTopEdge, distanceToLeftEdge);
             }
 
-            for(int i = 0; i <= range; i++){
+            for(int i = 1; i <= range; i++){
                 if (board[position[0] - i][position[1] - i] == null) {  // if space open
                     validMoves.add(new int[]{position[0] - i, position[1] - i});
                 }
@@ -271,7 +271,7 @@ public class Moves {
                 range = Math.min(distanceToTopEdge, distanceToRightEdge);
             }
 
-            for(int i = 0; i <= range; i++){
+            for(int i = 1; i <= range; i++){
                 if (board[position[0] + i][position[1] - i] == null) {  // if space open
                     validMoves.add(new int[]{position[0] + i, position[1] - i});
                 }
@@ -305,7 +305,7 @@ public class Moves {
                 range = Math.min(distanceToBottomEdge, distanceToLeftEdge);
             }
 
-            for(int i = 0; i <= range; i++){
+            for(int i = 1; i <= range; i++){
                 if (board[position[0] - i][position[1] + i] == null) {  // if space open
                     validMoves.add(new int[]{position[0] - i, position[1] + i});
                 }
@@ -327,7 +327,7 @@ public class Moves {
                 range = Math.min(distanceToBottomEdge, distanceToRightEdge);
             }
 
-            for(int i = 0; i <= range; i++){
+            for(int i = 1; i <= range; i++){
                 if (board[position[0] + i][position[1] + i] == null) {  // if space open
                     validMoves.add(new int[]{position[0] + i, position[1] + i});
                 }
