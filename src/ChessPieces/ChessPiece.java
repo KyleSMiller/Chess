@@ -10,6 +10,7 @@ public abstract class ChessPiece {
     private String image;
     private int[] position;
     private Color color;
+    private String name;
 
     private ImageView imageView;
 
@@ -20,6 +21,8 @@ public abstract class ChessPiece {
 
         imageView = new ImageView(new Image(this.image));
     }
+
+    public abstract String toString();
 
     public String getImage(){
         return image;
@@ -37,6 +40,8 @@ public abstract class ChessPiece {
         return color;
     }
 
+    public String getName;
+
     public abstract ArrayList<int[]> getMoves(ChessPiece[][] board);
 
     public abstract ArrayList<int[]> getAttacks(ChessPiece[][] board);
@@ -44,6 +49,12 @@ public abstract class ChessPiece {
     public void setPosition(int[] newPosition){
         this.position = newPosition;
     }
+
+    public void setName(String name){
+        this.name = name;
+    }
+
+    public abstract void generateName();
 
     /**
      * Fade the piece away

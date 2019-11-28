@@ -71,7 +71,7 @@ public class Moves {
         validAttacks = new ArrayList<>();
 
         for(int i = 0; i < desiredMoves.size(); i++){
-            if (desiredMoves.get(i)[0] >= 0 && desiredMoves.get(i)[0] <= board.length
+            if (desiredMoves.get(i)[0] >= 0 && desiredMoves.get(i)[0] < board.length
                 && desiredMoves.get(i)[1] >= 0 && desiredMoves.get(i)[1] < board[0].length
                ){  // if desired move on board
 
@@ -82,7 +82,6 @@ public class Moves {
                 }
                 else if(board[column][row].getColor() != this.color){  // opposite color piece blocking space
                     this.validAttacks.add(new int[]{column, row});
-                    break;
                 }
             }
         }
@@ -127,7 +126,7 @@ public class Moves {
         if(position[1] != 0){  // if not on top edge
             range = this.moveRange[0];
             if(range == INFINITE_RANGE) {
-                range = Math.abs(((board.length + 1) - position[1]) - 1);  // distance to top edge
+                range = position[1];  // distance to top edge
             }
             for(int i = 1; i <= range; i++){  // start loop at 1 to prevent looking at self
                 if (board[position[0]][position[1] - i] == null) {  // if space open
@@ -137,7 +136,7 @@ public class Moves {
                     validAttacks.add(new int[]{position[0], position[1] - i});
                     break;
                 }
-                else {  // if blocked by friendly piece
+                else if (board[position[0]][position[1] - i].getColor() == this.color){  // if blocked by friendly piece
                     break;
                 }
             }
@@ -155,10 +154,10 @@ public class Moves {
         int range;
         final int INFINITE_RANGE = -1;
 
-        if(position[1] != board.length){  // if not on bottom edge
+        if(position[1] != board.length - 1){  // if not on bottom edge
             range = this.moveRange[1];
             if(range == INFINITE_RANGE) {
-                range = Math.abs((position[1] - board.length) + 1);  // distance to bottom edge
+                range = Math.abs((board.length - 1)- position[1]);  // distance to bottom edge
             }
 
             for(int i = 1; i <= range; i++){  // start loop at 1 to prevent looking at self
@@ -169,7 +168,7 @@ public class Moves {
                     validAttacks.add(new int[]{position[0], position[1] + i});
                     break;
                 }
-                else {  // if blocked by friendly piece
+                else if (board[position[0]][position[1] + i].getColor() == this.color){  // if blocked by friendly piece
                     break;
                 }
             }
@@ -191,7 +190,7 @@ public class Moves {
         if(position[0] != 0){  // if not on left edge
             range = this.moveRange[2];
             if(range == INFINITE_RANGE){
-                range = Math.abs((position[0] - (board.length + 1)) + 1);  // distance to left edge
+                range = position[0];  // distance to left edge
             }
 
             for(int i = 1; i <= range; i++){  // start loop at 1 to prevent looking at self
@@ -202,7 +201,7 @@ public class Moves {
                     validAttacks.add(new int[]{position[0] - i, position[1]});
                     break;
                 }
-                else {  // if blocked by friendly piece
+                else if (board[position[0] - i][position[1]].getColor() == this.color){  // if blocked by friendly piece
                     break;
                 }
             }
@@ -211,7 +210,7 @@ public class Moves {
         if(position[0] != board.length - 1){  // if not on right edge
             range = this.moveRange[2];
             if(range == INFINITE_RANGE) {
-                range = Math.abs((board.length - position[0]) - 1);  // distance to right edge
+                range = Math.abs((board.length - 1) - position[0]);  // distance to right edge
             }
 
             for(int i = 1; i <= range; i++){  // start loop at 1 to prevent looking at self
@@ -222,7 +221,7 @@ public class Moves {
                     validAttacks.add(new int[]{position[0] + i, position[1]});
                     break;
                 }
-                else {  // if blocked by friendly piece
+                else if (board[position[0] + i][position[1]].getColor() == this.color){  // if blocked by friendly piece
                     break;
                 }
             }
@@ -244,36 +243,44 @@ public class Moves {
         if(position[0] != 0 && position[1] != 0){  // if not on left edge && not on top edge
             range = this.moveRange[3];
             if(range == INFINITE_RANGE) {
-                int distanceToTopEdge = Math.abs(((board.length + 1) - position[1]) - 1);
-                int distanceToLeftEdge = Math.abs((position[0] - (board.length + 1)) + 1);
+                int distanceToTopEdge = position[1];
+                int distanceToLeftEdge = position[0];
                 range = Math.min(distanceToTopEdge, distanceToLeftEdge);
             }
 
-            for(int i = 0; i <= range; i++){
+            for(int i = 1; i <= range; i++){
                 if (board[position[0] - i][position[1] - i] == null) {  // if space open
                     validMoves.add(new int[]{position[0] - i, position[1] - i});
                 }
                 else if (board[position[0] - i][position[1] - i].getColor() != this.color){  // if blocked by enemy piece
                     validAttacks.add(new int[]{position[0] - i, position[1] - i});
+                    break;
+                }
+                else if (board[position[0] - i][position[1] - i].getColor() == this.color){  // if blocked by friendly piece
+                    break;
                 }
             }
         }
 
         // rightUp
-        if(position[0] != board.length && position[1] != 0){  // if not on right edge && not on top edge
+        if(position[0] != board.length - 1 && position[1] != 0){  // if not on right edge && not on top edge
             range = this.moveRange[3];
             if(range == INFINITE_RANGE) {
-                int distanceToTopEdge = Math.abs(((board.length + 1) - position[1]) - 1);
-                int distanceToRightEdge = Math.abs((board.length - position[0]) - 1);
+                int distanceToTopEdge = position[1];
+                int distanceToRightEdge = Math.abs((board.length - 1)- position[0]);
                 range = Math.min(distanceToTopEdge, distanceToRightEdge);
             }
 
-            for(int i = 0; i <= range; i++){
+            for(int i = 1; i <= range; i++){
                 if (board[position[0] + i][position[1] - i] == null) {  // if space open
                     validMoves.add(new int[]{position[0] + i, position[1] - i});
                 }
                 else if (board[position[0] + i][position[1] - i].getColor() != this.color){  // if blocked by enemy piece
                     validAttacks.add(new int[]{position[0] + i, position[1] - i});
+                    break;
+                }
+                else if (board[position[0] + i][position[1] - i].getColor() == this.color){  // if blocked by friendly piece
+                    break;
                 }
             }
         }
@@ -291,39 +298,47 @@ public class Moves {
         final int INFINITE_RANGE = -1;
 
         // leftDown
-        if(position[0] != 0 && position[1] != board.length){  // if not on left edge && not on bottom edge
+        if(position[0] != 0 && position[1] != board.length - 1){  // if not on left edge && not on bottom edge
             range = this.moveRange[4];
             if(range == INFINITE_RANGE) {
-                int distanceToBottomEdge = Math.abs((position[1] - board.length) + 1);
-                int distanceToLeftEdge = Math.abs((position[0] - (board.length + 1)) + 1);
+                int distanceToBottomEdge = Math.abs((board.length - 1)- position[1]);
+                int distanceToLeftEdge = position[0];
                 range = Math.min(distanceToBottomEdge, distanceToLeftEdge);
             }
 
-            for(int i = 0; i <= range; i++){
+            for(int i = 1; i <= range; i++){
                 if (board[position[0] - i][position[1] + i] == null) {  // if space open
                     validMoves.add(new int[]{position[0] - i, position[1] + i});
                 }
                 else if (board[position[0] - i][position[1] + i].getColor() != this.color){  // if blocked by enemy piece
                     validAttacks.add(new int[]{position[0] - i, position[1] + i});
+                    break;
+                }
+                else if (board[position[0] - i][position[1] + i].getColor() == this.color){  // if blocked by friendly piece
+                    break;
                 }
             }
         }
 
         // rightDown
-        if(position[0] != board.length && position[1] != board.length){  // if not on right edge && not on bottom edge
+        if(position[0] != board.length - 1 && position[1] != board.length - 1){  // if not on right edge && not on bottom edge
             range = this.moveRange[4];
             if(range == -1) {
-                int distanceToBottomEdge = Math.abs((position[1] - board.length) + 1);
-                int distanceToRightEdge = Math.abs((board.length - position[0]) - 1);
+                int distanceToBottomEdge = Math.abs((board.length - 1)- position[1]);
+                int distanceToRightEdge = Math.abs((board.length - 1)- position[0]);
                 range = Math.min(distanceToBottomEdge, distanceToRightEdge);
             }
 
-            for(int i = 0; i <= range; i++){
+            for(int i = 1; i <= range; i++){
                 if (board[position[0] + i][position[1] + i] == null) {  // if space open
                     validMoves.add(new int[]{position[0] + i, position[1] + i});
                 }
                 else if (board[position[0] + i][position[1] + i].getColor() != this.color){  // if blocked by enemy piece
                     validAttacks.add(new int[]{position[0] + i, position[1] + i});
+                    break;
+                }
+                else if (board[position[0] + i][position[1] + i].getColor() == this.color){  // if blocked by friendly piece
+                    break;
                 }
             }
         }
