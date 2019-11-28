@@ -339,33 +339,15 @@ public class ChessBoard extends StackPane {
         if(!canMove(piece, endPosition)) return;
         int[] startPosition = piece.getPosition();
 
-//        // get center coordinates of the start and ending cell
-//        Bounds center1 = selections.get(startPosition[0]).get(startPosition[1]).getBoundsInParent();
-//        Bounds center2 = selections.get(endPosition[0]).get(endPosition[1]).getBoundsInParent();
-
-//        // create animation path for the piece
-//        PathTransition path = new PathTransition();
-//        path.setDuration(new Duration(1000));
-//        System.out.println("Center 1 = (" + center1.getCenterX() + ", " + center1.getCenterY() + ")");
-//        System.out.println("Center 2 = (" + center2.getCenterX() + ", " + center2.getCenterY() + ")");
-//        Line line = new Line(center1.getCenterX(), center1.getCenterY(), center2.getCenterX(), center2.getCenterY());
-//        System.out.println("Line starts at ("  + line.getStartX() + ", " + line.getStartY() + ") and ends at (" + line.getEndX() + ", " + line.getEndY() + ")");
-//        Pane pane = new Pane();
-//        // super.getChildren().add(pane);
-//        // pane.getChildren().add(line);
-//        line.setStrokeWidth(10);
-//        path.setPath(line);
-//        path.setNode(piece.getImageView());
-
         if(board[endPosition[0]][endPosition[1]] != null){  // if space occupied
             board[endPosition[0]][endPosition[1]].fadeOut();
             pieceGrid.getChildren().remove(board[endPosition[0]][endPosition[1]].getImageView());
             board[endPosition[0]][endPosition[1]] = null;
         }
+
         board[endPosition[0]][endPosition[1]] = piece;
         piece.setPosition(new int[]{endPosition[0], endPosition[1]});
         board[startPosition[0]][startPosition[1]] = null;
-//        path.play();
         updateBoard();
         removeMoveHighlight();
     }
