@@ -11,8 +11,17 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
+import org.json.JSONException;
+import org.json.JSONObject;
 
+import java.io.*;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Scanner;
+
+import static java.lang.System.exit;
+
 
 public class ChessBoard extends StackPane {
 
@@ -33,6 +42,8 @@ public class ChessBoard extends StackPane {
     private ArrayList<int[]> validMoves = new ArrayList<>();
     private boolean whiteTurn = true;
     private boolean isWhite;
+    // multiplayer data
+
 
     /**
      * Create a new chessboard
@@ -69,8 +80,41 @@ public class ChessBoard extends StackPane {
         gameLoop();
     }
 
+    private ServerSocket sv;
+    private Socket socket;
+    private BufferedReader bufferedReader;
+    private BufferedWriter bufferedWriter;
+    private Scanner scanner;
 
-    public ArrayList<ArrayList<Rectangle>> getSelections() {
+    public void createServer(int port){
+        try{
+            this.sv = new ServerSocket(port);
+            System.out.println("Waiting for opponent...");
+            this.socket = sv.accept();
+            System.out.println("Opponent found");
+            this.bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            this.bufferedWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+            this.scanner = new Scanner(System.in);
+        } catch(IOException e){
+            System.out.println("Cannot open server on port " + port);
+        }
+    }
+
+    public void connectToServer(String ip, int port){
+        try {
+            System.out.println("Connecting to opponent...");
+            socket = new Socket(ip, port);
+            System.out.println("Connected");
+            this.bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            this.bufferedWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+        } catch(IOException e){
+            System.out.println("Cannot connect to server " + ip + ":" + port);
+        }
+    }
+
+
+
+    private ArrayList<ArrayList<Rectangle>> getSelections() {
         return selections;
     }
 
@@ -229,15 +273,6 @@ public class ChessBoard extends StackPane {
         this.selections.get(col).get(row).setFill(cellColor);  // return to original cellColor
     }
 
-
-    /**
-     * Toggle piece highlighting on mouse-over
-     * @param highlight  true if highlighting active, false if not
-     */
-    private void doPieceHighlight(boolean highlight){
-
-    }
-
     /**
      * Highlight the possible move and attack squares a piece can legally go to
      * @param piece  the piece to display the moves of
@@ -319,6 +354,9 @@ public class ChessBoard extends StackPane {
      */
     private boolean canMove(ChessPiece piece, int[] position){
         for(int[] pos : validMoves){
+            if(isWhite != whiteTurn){
+                return false;
+            }
             if((position[0] == piece.getPosition()[0] && position[1] == piece.getPosition()[1])){
                 return false;
             }
@@ -340,7 +378,6 @@ public class ChessBoard extends StackPane {
         int[] startPosition = piece.getPosition();
 
         if(board[endPosition[0]][endPosition[1]] != null){  // if space occupied
-            board[endPosition[0]][endPosition[1]].fadeOut();
             pieceGrid.getChildren().remove(board[endPosition[0]][endPosition[1]].getImageView());
             board[endPosition[0]][endPosition[1]] = null;
         }
@@ -350,14 +387,79 @@ public class ChessBoard extends StackPane {
         board[startPosition[0]][startPosition[1]] = null;
         updateBoard();
         removeMoveHighlight();
+        whiteTurn = !whiteTurn;
     }
 
+    private JSONObject convertBoardToJson(){
+        JSONObject boardJson = new JSONObject();
+        for(int column = 0; column < board.length; column++){
+            for(int row = 0; row < board[column].length; row++){
+                try {
+                    String piecePosition = column + " " + row;
+                    if (board[column][row] == null) {
+                        boardJson.put(piecePosition, "EMPTY");
+                    } else {
+                        String piece = board[column][row].getPieceColor() + " " + board[column][row].getName();
+                        boardJson.put(piecePosition, piece);
+                    }
+                } catch(JSONException e){
+                    System.out.println("Cannot put piece at " + column + ", " + row + " in Json object");
+                }
+            }
+        }
+        return boardJson;
+    }
+
+    private ChessPiece[][] convertJsonToBoard(JSONObject boardJson){
+        ChessPiece[][] board = new ChessPiece[COLUMNS][ROWS];
+        for(int column = 0; column < board.length; column++){
+            for(int row = 0; row < board[column].length; row++){
+                try{
+                    String piecePosition = column + " " + row;
+                    String pieceInfo = (String) boardJson.get(piecePosition);
+
+                    if(pieceInfo.equals("EMPTY")){
+                        board[column][row] = null;
+                        continue;
+                    }
+
+                    String pieceColor = pieceInfo.split("\\s+")[0];
+                    String pieceType = pieceInfo.split("\\s+")[1];
+                    ChessPiece.Color color;
+
+                    if(pieceColor.equals("White")){
+                        color = ChessPiece.Color.WHITE;
+                    }
+                    else{
+                        color = ChessPiece.Color.BLACK;
+                    }
+
+                    switch(pieceType){
+                        case "King": board[column][row] = new King(new int[]{column, row}, color); break;
+                        case "Queen": board[column][row] = new Queen(new int[]{column, row}, color); break;
+                        case "Bishop": board[column][row] = new Bishop(new int[]{column, row}, color); break;
+                        case "Knight": board[column][row] = new Knight(new int[]{column, row}, color); break;
+                        case "Rook": board[column][row] = new Rook(new int[]{column, row}, color); break;
+                        case "Pawn": board[column][row] = new Pawn(new int[]{column, row}, color); break;
+                        default: board[column][row] = null;
+                    }
+
+
+                } catch(JSONException e){
+                    System.out.println("Error reading in board sent by opponent");
+                }
+            }
+        }
+        return board;
+    }
 
 
     /**
      * Wait for a Mouse event and perform the according action on the board
      */
     private void gameLoop(){
+        boolean playGame = true;
+
         doHighlight();
         for (ArrayList<Rectangle> column : this.getSelections()){
             for (Rectangle rect : column){
@@ -368,6 +470,25 @@ public class ChessBoard extends StackPane {
                 });
             }
         }
+
+        if(this.socket == null){
+            System.out.println("You must open or connect to a server before starting the game");
+            exit(-1);
+        }
+        else{
+            new Thread(() -> {
+                while(playGame) {
+                    if (isWhite) {  // white goes first
+                        // send move
+                        // read move
+                    } else {
+                        // read move
+                        // send move
+                    }
+                }
+            }).start();
+        }
+
     }
 
 }
