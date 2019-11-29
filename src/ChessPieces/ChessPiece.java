@@ -40,7 +40,19 @@ public abstract class ChessPiece {
         return color;
     }
 
-    public String getName;
+    public String getPieceColor(){
+        String color = "";
+        switch (getColor()){
+            case WHITE: color = "White"; break;
+            case BLACK: color = "Black"; break;
+            default: color = "White";
+        }
+        return color;
+    }
+
+    public String getName(){
+        return this.name;
+    }
 
     public abstract ArrayList<int[]> getMoves(ChessPiece[][] board);
 
@@ -54,12 +66,35 @@ public abstract class ChessPiece {
         this.name = name;
     }
 
-    public abstract void generateName();
+    public abstract String generateName();
 
-    /**
-     * Fade the piece away
-     */
-    public void fadeOut(){
+    public String getPositionOnBoard(){
+        String column;
+        String row;
+        switch (getPosition()[1]){
+            case 0: column = "A"; break;
+            case 1: column = "B"; break;
+            case 2: column = "C"; break;
+            case 3: column = "D"; break;
+            case 4: column = "E"; break;
+            case 5: column = "F"; break;
+            case 6: column = "G"; break;
+            case 7: column = "H"; break;
+            default: column = "E";
+        }
+        switch (getPosition()[1]){
+            case 0: row = "8"; break;
+            case 1: row = "7"; break;
+            case 2: row = "6"; break;
+            case 3: row = "5"; break;
+            case 4: row = "4"; break;
+            case 5: row = "3"; break;
+            case 6: row = "2"; break;
+            case 7: row = "1"; break;
+            default: row = "1";
+        }
+
+        return column + "" + row;
 
     }
 
