@@ -10,6 +10,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
@@ -206,11 +207,19 @@ public class ChessBoard extends StackPane {
      * update the visual board to match the array representation of the board
      */
     private boolean updateBoard(){
+        pieceGrid.getChildren().clear();
         for(int column = 0; column < COLUMNS; column++){
             for(int row = 0; row < ROWS; row++){
                 if(this.board.get(column).get(row) != null){
                     pieceGrid.getChildren().remove(this.board.get(column).get(row).getImageView());
                     pieceGrid.add(this.board.get(column).get(row).getImageView(), column, row);
+                    this.board.get(column).get(row).getImageView().setFitHeight(cellSize);
+                    this.board.get(column).get(row).getImageView().setFitWidth(cellSize);
+                }
+                else{
+                    Rectangle empty = new Rectangle(cellSize, cellSize);
+                    empty.setFill(Color.TRANSPARENT);
+                    this.pieceGrid.add(empty, column, row);
                 }
             }
         }
@@ -444,7 +453,7 @@ public class ChessBoard extends StackPane {
             String type = piece.split("@")[0].split("\\s+")[1];
             ChessPiece.Color color;
 
-            System.out.println(stringColor + " " + type + " @ " + location);
+            // System.out.println(stringColor + " " + type + " @ " + location);
 
             if (stringColor.equals("White")) {
                 color = ChessPiece.Color.WHITE;
@@ -524,16 +533,14 @@ public class ChessBoard extends StackPane {
 
         for(ObservableList<ChessPiece> column : board){
             column.addListener((ListChangeListener<ChessPiece>)(ov ->{
-               Platform.runLater(() -> updateBoard());
+               Platform.runLater(() -> updateBoard());  // update the visual representation of the board when the pieces move
             }));
         }
-//        board.addListener((ListChangeListener<ObservableList<ChessPiece>>)(ov ->{
-//            updateBoard();  // update the visual board when the array representation of pieces changes
-//        }));
 
         new Thread(() -> {
             while(true) {
                 if (isWhite) {  // white goes first
+                    System.out.println();  // i do not even remotely understand it, but if this print statement is not here, it doesn't work
                     if (hasBeenUpdated) {
                         sendBoard(convertBoardToString());
                         hasBeenUpdated = false;
