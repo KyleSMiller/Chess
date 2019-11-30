@@ -5,6 +5,8 @@ import ChessPieces.Bishop;
 import ChessPieces.Knight;
 import ChessPieces.Rook;
 import ChessPieces.Pawn;
+import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
@@ -26,7 +28,8 @@ public class ChessBoard extends StackPane {
     // board data
     private final int ROWS = 8;
     private final int COLUMNS = 8;
-    private ChessPiece[][] board = new ChessPiece[COLUMNS][ROWS];
+    // private ChessPiece[][] board = new ChessPiece[COLUMNS][ROWS];
+    private ObservableList<ObservableList<ChessPiece>> board;
     // panes and nodes
     private ArrayList<ArrayList<Rectangle>> selections;
     private GridPane background = new GridPane();
@@ -115,9 +118,9 @@ public class ChessBoard extends StackPane {
      */
     private ArrayList<ArrayList<Rectangle>> createSelections(){
         ArrayList<ArrayList<Rectangle>> rects = new ArrayList<>();
-        for (int column = 0; column < this.board.length; column++){
+        for (int column = 0; column < this.board.size(); column++){
             rects.add(new ArrayList<>());
-            for (int row = 0; row < this.board[column].length; row++){
+            for (int row = 0; row < this.board.get(column).size(); row++){
                 rects.get(column).add(new Rectangle(this.size / COLUMNS, this.size / ROWS, Color.TRANSPARENT));
             }
         }
@@ -128,10 +131,10 @@ public class ChessBoard extends StackPane {
      * Create a blank chess board with no pieces
      */
     private void createBoard(){
-        for (int column = 0; column < this.board.length; column++){
-            for (int row = 0; row < this.board[column].length; row++){
+        for (int column = 0; column < this.board.size(); column++){
+            for (int row = 0; row < this.board.get(column).size(); row++){
                 // set up the array
-                this.board[column][row] = null;
+                this.board.get(column).set(row, null);
                 // set up the background
                 Rectangle cell = new Rectangle(cellSize, cellSize);
                 if((column + row) % 2 == 0){
@@ -154,40 +157,40 @@ public class ChessBoard extends StackPane {
      */
     private void addPieces(){
         // back row of black pieces
-        this.board[0][0] = new Rook(new int[] {0, 0}, ChessPiece.Color.BLACK);
-        this.board[1][0] = new Knight(new int[] {1, 0}, ChessPiece.Color.BLACK);
-        this.board[2][0] = new Bishop(new int[] {2, 0}, ChessPiece.Color.BLACK);
-        this.board[3][0] = new Queen(new int[] {3, 0}, ChessPiece.Color.BLACK);
-        this.board[4][0] = new King(new int[] {4, 0}, ChessPiece.Color.BLACK);
-        this.board[5][0] = new Bishop(new int[] {5, 0}, ChessPiece.Color.BLACK);
-        this.board[6][0] = new Knight(new int[] {6, 0}, ChessPiece.Color.BLACK);
-        this.board[7][0] = new Rook(new int[] {7, 0}, ChessPiece.Color.BLACK);
+        this.board.get(0).set(0, new Rook(new int[] {0, 0}, ChessPiece.Color.BLACK));
+        this.board.get(1).set(0, new Knight(new int[] {1, 0}, ChessPiece.Color.BLACK));
+        this.board.get(2).set(0, new Bishop(new int[] {2, 0}, ChessPiece.Color.BLACK));
+        this.board.get(3).set(0, new Queen(new int[] {3, 0}, ChessPiece.Color.BLACK));
+        this.board.get(4).set(0, new King(new int[] {4, 0}, ChessPiece.Color.BLACK));
+        this.board.get(5).set(0, new Bishop(new int[] {5, 0}, ChessPiece.Color.BLACK));
+        this.board.get(6).set(0, new Knight(new int[] {6, 0}, ChessPiece.Color.BLACK));
+        this.board.get(7).set(0, new Rook(new int[] {7, 0}, ChessPiece.Color.BLACK));
         // black pawns
         for(int column = 0; column < COLUMNS; column++){
-            this.board[column][1] = new Pawn(new int[] {column, 1}, ChessPiece.Color.BLACK);
+            this.board.get(column).set(1, new Pawn(new int[] {column, 1}, ChessPiece.Color.BLACK));
         }
 
         // back row of white pieces
-        this.board[0][ROWS - 1] = new Rook(new int[] {0, ROWS - 1}, ChessPiece.Color.WHITE);
-        this.board[1][ROWS - 1] = new Knight(new int[] {1, ROWS - 1}, ChessPiece.Color.WHITE);
-        this.board[2][ROWS - 1] = new Bishop(new int[] {2, ROWS - 1}, ChessPiece.Color.WHITE);
-        this.board[3][ROWS - 1] = new Queen(new int[] {3, ROWS - 1}, ChessPiece.Color.WHITE);
-        this.board[4][ROWS - 1] = new King(new int[] {4, ROWS - 1}, ChessPiece.Color.WHITE);
-        this.board[5][ROWS - 1] = new Bishop(new int[] {5, ROWS - 1}, ChessPiece.Color.WHITE);
-        this.board[6][ROWS - 1] = new Knight(new int[] {6, ROWS - 1}, ChessPiece.Color.WHITE);
-        this.board[7][ROWS - 1] = new Rook(new int[] {7, ROWS - 1}, ChessPiece.Color.WHITE);
+        this.board.get(0).set(ROWS - 1, new Rook(new int[] {0, ROWS - 1}, ChessPiece.Color.WHITE));
+        this.board.get(1).set(ROWS - 1, new Knight(new int[] {1, ROWS - 1}, ChessPiece.Color.WHITE));
+        this.board.get(2).set(ROWS - 1, new Bishop(new int[] {2, ROWS - 1}, ChessPiece.Color.WHITE));
+        this.board.get(3).set(ROWS - 1, new Queen(new int[] {3, ROWS - 1}, ChessPiece.Color.WHITE));
+        this.board.get(4).set(ROWS - 1, new King(new int[] {4, ROWS - 1}, ChessPiece.Color.WHITE));
+        this.board.get(5).set(ROWS - 1, new Bishop(new int[] {5, ROWS - 1}, ChessPiece.Color.WHITE));
+        this.board.get(6).set(ROWS - 1, new Knight(new int[] {6, ROWS - 1}, ChessPiece.Color.WHITE));
+        this.board.get(7).set(ROWS - 1, new Rook(new int[] {7, ROWS - 1}, ChessPiece.Color.WHITE));
         // white pawns
         for(int column = 0; column < COLUMNS; column++){
-            this.board[column][ROWS - 2] = new Pawn(new int[] {column, ROWS - 2}, ChessPiece.Color.WHITE);
+            this.board.get(column).set(ROWS - 2, new Pawn(new int[] {column, ROWS - 2}, ChessPiece.Color.WHITE));
         }
 
         // display the pieces on the board
         for(int column = 0; column < COLUMNS; column++){
             for(int row = 0; row < ROWS; row++){
-                if(board[column][row] != null){
-                    this.board[column][row].getImageView().setFitHeight(cellSize);
-                    this.board[column][row].getImageView().setFitWidth(cellSize);
-                    pieceGrid.add(board[column][row].getImageView(), column, row);
+                if(this.board.get(column).get(row) != null){
+                    this.board.get(column).get(row).getImageView().setFitHeight(cellSize);
+                    this.board.get(column).get(row).getImageView().setFitWidth(cellSize);
+                    pieceGrid.add(this.board.get(column).get(row).getImageView(), column, row);
                 }
             }
         }
@@ -199,9 +202,9 @@ public class ChessBoard extends StackPane {
     private void updateBoard(){
         for(int column = 0; column < COLUMNS; column++){
             for(int row = 0; row < ROWS; row++){
-                if(board[column][row] != null){
-                    pieceGrid.getChildren().remove(board[column][row].getImageView());
-                    pieceGrid.add(board[column][row].getImageView(), column, row);
+                if(this.board.get(column).get(row) != null){
+                    pieceGrid.getChildren().remove(this.board.get(column).get(row).getImageView());
+                    pieceGrid.add(this.board.get(column).get(row).getImageView(), column, row);
                 }
             }
         }
@@ -269,12 +272,18 @@ public class ChessBoard extends StackPane {
      * @param piece  the piece to display the moves of
      */
     private void highlightMoves(ChessPiece piece){
-        ArrayList<int[]> validMoves = piece.getMoves(this.board);
+        ChessPiece[][] tempBoard = new ChessPiece[COLUMNS][ROWS];
+        for(int column = 0; column < board.size(); column++){
+            for(int row = 0; row < board.get(column).size(); row++){
+                tempBoard[column][row] = board.get(column).get(row);
+            }
+        }
+        ArrayList<int[]> validMoves = piece.getMoves(tempBoard);
         for(int i = 0; i < validMoves.size(); i++){  // highlight moves
             this.selections.get(validMoves.get(i)[0]).get(validMoves.get(i)[1]).setFill(Color.GREEN);
             this.selections.get(validMoves.get(i)[0]).get(validMoves.get(i)[1]).setOpacity(0.25);
         }
-        ArrayList<int[]> validAttacks = piece.getAttacks(this.board);
+        ArrayList<int[]> validAttacks = piece.getAttacks(tempBoard);
         for(int i = 0; i < validAttacks.size(); i++){  // highlight attacks
             this.selections.get(validAttacks.get(i)[0]).get(validAttacks.get(i)[1]).setFill(Color.RED);
             this.selections.get(validAttacks.get(i)[0]).get(validAttacks.get(i)[1]).setOpacity(0.25);
@@ -302,7 +311,7 @@ public class ChessBoard extends StackPane {
      */
     private void selectPiece(Rectangle cell) {
         int[] pieceIndex = getIndex(cell);
-        ChessPiece piece = board[pieceIndex[0]][pieceIndex[1]];
+        ChessPiece piece = board.get(pieceIndex[0]).get(pieceIndex[1]);
         if(piece == null) return;
 
         if (piece.getColor() == ChessPiece.Color.WHITE && isWhite
@@ -368,14 +377,14 @@ public class ChessBoard extends StackPane {
         if(!canMove(piece, endPosition)) return;
         int[] startPosition = piece.getPosition();
 
-        if(board[endPosition[0]][endPosition[1]] != null){  // if space occupied
-            pieceGrid.getChildren().remove(board[endPosition[0]][endPosition[1]].getImageView());
-            board[endPosition[0]][endPosition[1]] = null;
+        if(board.get(endPosition[0]).get(endPosition[1]) != null){  // if space occupied
+            pieceGrid.getChildren().remove(board.get(endPosition[0]).get(endPosition[1]).getImageView());
+            board.get(endPosition[0]).set(endPosition[1], null);
         }
 
-        board[endPosition[0]][endPosition[1]] = piece;
+        board.get(endPosition[0]).set(endPosition[1], piece);
         piece.setPosition(new int[]{endPosition[0], endPosition[1]});
-        board[startPosition[0]][startPosition[1]] = null;
+        board.get(startPosition[0]).set(startPosition[1], null);
         updateBoard();
         removeMoveHighlight();
         whiteTurn = !whiteTurn;
@@ -388,15 +397,15 @@ public class ChessBoard extends StackPane {
      */
     private String convertBoardToString(){
         String boardString = "";
-        for(int column = 0; column < board.length; column++){
-            for(int row = 0; row < board[column].length; row++){
+        for(int column = 0; column < board.size(); column++){
+            for(int row = 0; row < board.get(column).size(); row++){
                 String piecePosition = column + "-" + row;
                 String pieceType;
-                if(board[column][row] == null){
+                if(board.get(column).get(row) == null){
                     pieceType = "EMPTY";
                 }
                 else {
-                    pieceType = board[column][row].getPieceColor() + " " + board[column][row].getName();
+                    pieceType = board.get(column).get(row).getPieceColor() + " " + board.get(column).get(row).getName();
                 }
                 boardString += pieceType + "@" + piecePosition + ",";
             }
@@ -409,7 +418,7 @@ public class ChessBoard extends StackPane {
      * @param boardString  the string representation of the board
      * @return             the ChessPiece array
      */
-    private ChessPiece[][] convertStringToBoard(String boardString) {
+    private ObservableList<ObservableList<ChessPiece>> convertStringToBoard(String boardString) {
         if(boardString == null) return this.board;
         String[] pieces = boardString.split(",");
         for (String piece : pieces) {
@@ -419,7 +428,7 @@ public class ChessBoard extends StackPane {
             int row = Integer.parseInt(piece.split("@")[1].split("-")[1]);
 
             if (piece.split("@")[0].equals("EMPTY")) {
-                board[column][row] = null;
+                board.get(column).set(row, null);
                 continue;
             }  // open space
 
@@ -438,25 +447,25 @@ public class ChessBoard extends StackPane {
 
             switch (type) {
                 case "King":
-                    board[column][row] = new King(new int[]{column, row}, color);
+                    board.get(column).set(row, new King(new int[]{column, row}, color));
                     break;
                 case "Queen":
-                    board[column][row] = new Queen(new int[]{column, row}, color);
+                    board.get(column).set(row, new Queen(new int[]{column, row}, color));
                     break;
                 case "Bishop":
-                    board[column][row] = new Bishop(new int[]{column, row}, color);
+                    board.get(column).set(row, new Bishop(new int[]{column, row}, color));
                     break;
                 case "Knight":
-                    board[column][row] = new Knight(new int[]{column, row}, color);
+                    board.get(column).set(row, new Knight(new int[]{column, row}, color));
                     break;
                 case "Rook":
-                    board[column][row] = new Rook(new int[]{column, row}, color);
+                    board.get(column).set(row, new Rook(new int[]{column, row}, color));
                     break;
                 case "Pawn":
-                    board[column][row] = new Pawn(new int[]{column, row}, color);
+                    board.get(column).set(row, new Pawn(new int[]{column, row}, color));
                     break;
                 default:
-                    board[column][row] = null;
+                    board.get(column).set(row, null);
             }
         }
     return board;
@@ -478,7 +487,7 @@ public class ChessBoard extends StackPane {
      * Get an updated board with the opponent's move
      * @return  the updated board
      */
-    private ChessPiece[][] receiveBoard(){
+    private ObservableList<ObservableList<ChessPiece>> receiveBoard(){
         try{
             BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             return convertStringToBoard(br.readLine());
@@ -506,7 +515,7 @@ public class ChessBoard extends StackPane {
             }
         }
 
-        super.setOnMouseMoved(e -> {
+        board.addListener((ListChangeListener)(ov ->{
             if (isWhite) {  // white goes first
                 if(hasBeenUpdated) {
                     sendBoard(convertBoardToString());
@@ -522,19 +531,7 @@ public class ChessBoard extends StackPane {
                     hasBeenUpdated = false;
                 }
             }
-        });
-
-//        if(this.socket == null){
-//            System.out.println("You must open or connect to a server before starting the game");
-//            exit(-1);
-//        }
-//        else{
-//            new Thread(() -> {
-//                while(true) {
-//
-//                }
-//            }).start();
-//        }
+        }));
     }
 
 }
