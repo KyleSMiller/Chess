@@ -410,6 +410,7 @@ public class ChessBoard extends StackPane {
      * @return             the ChessPiece array
      */
     private ChessPiece[][] convertStringToBoard(String boardString) {
+        if(boardString == null) return this.board;
         String[] pieces = boardString.split(",");
         for (String piece : pieces) {
             if (piece.equals("")) continue;  // skip blank index at end of split string
@@ -426,6 +427,8 @@ public class ChessBoard extends StackPane {
             String stringColor = piece.split("@")[0].split("\\s+")[0];
             String type = piece.split("@")[0].split("\\s+")[1];
             ChessPiece.Color color;
+
+            System.out.println(stringColor + " " + type + " @ " + location);
 
             if (stringColor.equals("White")) {
                 color = ChessPiece.Color.WHITE;
@@ -503,32 +506,35 @@ public class ChessBoard extends StackPane {
             }
         }
 
-        if(this.socket == null){
-            System.out.println("You must open or connect to a server before starting the game");
-            exit(-1);
-        }
-        else{
-            new Thread(() -> {
-                while(true) {
-                    if (isWhite) {  // white goes first
-                        System.out.println("what");
-                        if(hasBeenUpdated) {
-                            sendBoard(convertBoardToString());
-                            hasBeenUpdated = false;
-                            board = receiveBoard();
-                            updateBoard();
-                        }
-                    } else {
-                        board = receiveBoard();
-                        updateBoard();
-                        if(hasBeenUpdated) {
-                            sendBoard(convertBoardToString());
-                            hasBeenUpdated = false;
-                        }
-                    }
+        super.setOnMouseMoved(e -> {
+            if (isWhite) {  // white goes first
+                if(hasBeenUpdated) {
+                    sendBoard(convertBoardToString());
+                    hasBeenUpdated = false;
+                    board = receiveBoard();
+                    updateBoard();
                 }
-            }).start();
-        }
+            } else {
+                board = receiveBoard();
+                updateBoard();
+                if(hasBeenUpdated) {
+                    sendBoard(convertBoardToString());
+                    hasBeenUpdated = false;
+                }
+            }
+        });
+
+//        if(this.socket == null){
+//            System.out.println("You must open or connect to a server before starting the game");
+//            exit(-1);
+//        }
+//        else{
+//            new Thread(() -> {
+//                while(true) {
+//
+//                }
+//            }).start();
+//        }
     }
 
 }
