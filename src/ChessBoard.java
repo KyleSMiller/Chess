@@ -5,6 +5,7 @@ import ChessPieces.Bishop;
 import ChessPieces.Knight;
 import ChessPieces.Rook;
 import ChessPieces.Pawn;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -204,7 +205,7 @@ public class ChessBoard extends StackPane {
     /**
      * update the visual board to match the array representation of the board
      */
-    private void updateBoard(){
+    private boolean updateBoard(){
         for(int column = 0; column < COLUMNS; column++){
             for(int row = 0; row < ROWS; row++){
                 if(this.board.get(column).get(row) != null){
@@ -213,6 +214,7 @@ public class ChessBoard extends StackPane {
                 }
             }
         }
+        return true;
     }
 
     private Paint cellColor;  // because of lambda limitations, cellColor must be a member variable. I know, it hurts me too
@@ -522,7 +524,7 @@ public class ChessBoard extends StackPane {
 
         for(ObservableList<ChessPiece> column : board){
             column.addListener((ListChangeListener<ChessPiece>)(ov ->{
-               updateBoard();
+               Platform.runLater(() -> updateBoard());
             }));
         }
 //        board.addListener((ListChangeListener<ObservableList<ChessPiece>>)(ov ->{
