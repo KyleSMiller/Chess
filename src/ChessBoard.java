@@ -5,13 +5,24 @@ import ChessPieces.Bishop;
 import ChessPieces.Knight;
 import ChessPieces.Rook;
 import ChessPieces.Pawn;
+import javafx.animation.FadeTransition;
+import javafx.animation.FillTransition;
+import javafx.animation.Timeline;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
+import javafx.util.Duration;
 
+import javax.naming.TimeLimitExceededException;
+import java.sql.Time;
 import java.util.ArrayList;
 
 public class ChessBoard extends StackPane {
@@ -25,6 +36,7 @@ public class ChessBoard extends StackPane {
     private GridPane background = new GridPane();
     private GridPane pieceGrid = new GridPane();
     private GridPane selectionGrid = new GridPane();
+    private StackPane winnerPane;
     // sizing variables
     private int size;
     private int cellSize;
@@ -33,6 +45,10 @@ public class ChessBoard extends StackPane {
     private ArrayList<int[]> validMoves = new ArrayList<>();
     private boolean whiteTurn = true;
     private boolean isWhite;
+    private King blackKing;
+    private King whiteKing;
+    private String winner;
+    private Color turnColor;
 
     /**
      * Create a new chessboard
@@ -62,6 +78,8 @@ public class ChessBoard extends StackPane {
         createBoard();
         addPieces();
 
+        winnerPane = new StackPane();
+
         isWhite = team;
     }
 
@@ -69,8 +87,7 @@ public class ChessBoard extends StackPane {
         gameLoop();
     }
 
-
-    public ArrayList<ArrayList<Rectangle>> getSelections() {
+    private ArrayList<ArrayList<Rectangle>> getSelections() {
         return selections;
     }
 
@@ -123,7 +140,8 @@ public class ChessBoard extends StackPane {
         this.board[1][0] = new Knight(new int[] {1, 0}, ChessPiece.Color.BLACK);
         this.board[2][0] = new Bishop(new int[] {2, 0}, ChessPiece.Color.BLACK);
         this.board[3][0] = new Queen(new int[] {3, 0}, ChessPiece.Color.BLACK);
-        this.board[4][0] = new King(new int[] {4, 0}, ChessPiece.Color.BLACK);
+        blackKing        = new King(new int[] {4, 0}, ChessPiece.Color.BLACK);
+        this.board[4][0] = blackKing;
         this.board[5][0] = new Bishop(new int[] {5, 0}, ChessPiece.Color.BLACK);
         this.board[6][0] = new Knight(new int[] {6, 0}, ChessPiece.Color.BLACK);
         this.board[7][0] = new Rook(new int[] {7, 0}, ChessPiece.Color.BLACK);
@@ -137,7 +155,8 @@ public class ChessBoard extends StackPane {
         this.board[1][ROWS - 1] = new Knight(new int[] {1, ROWS - 1}, ChessPiece.Color.WHITE);
         this.board[2][ROWS - 1] = new Bishop(new int[] {2, ROWS - 1}, ChessPiece.Color.WHITE);
         this.board[3][ROWS - 1] = new Queen(new int[] {3, ROWS - 1}, ChessPiece.Color.WHITE);
-        this.board[4][ROWS - 1] = new King(new int[] {4, ROWS - 1}, ChessPiece.Color.WHITE);
+        whiteKing               = new King(new int[] {4, ROWS - 1}, ChessPiece.Color.WHITE);
+        this.board[4][ROWS - 1] = whiteKing;
         this.board[5][ROWS - 1] = new Bishop(new int[] {5, ROWS - 1}, ChessPiece.Color.WHITE);
         this.board[6][ROWS - 1] = new Knight(new int[] {6, ROWS - 1}, ChessPiece.Color.WHITE);
         this.board[7][ROWS - 1] = new Rook(new int[] {7, ROWS - 1}, ChessPiece.Color.WHITE);
@@ -229,15 +248,6 @@ public class ChessBoard extends StackPane {
         this.selections.get(col).get(row).setFill(cellColor);  // return to original cellColor
     }
 
-
-    /**
-     * Toggle piece highlighting on mouse-over
-     * @param highlight  true if highlighting active, false if not
-     */
-    private void doPieceHighlight(boolean highlight){
-
-    }
-
     /**
      * Highlight the possible move and attack squares a piece can legally go to
      * @param piece  the piece to display the moves of
@@ -269,6 +279,41 @@ public class ChessBoard extends StackPane {
             }
         }
     }
+
+    /**
+     * Popup a box displaying the winner of the game
+     */
+    private void displayWinner(){
+        System.out.println("winner! " + winner);
+        winnerPane.setAlignment(Pos.CENTER);
+        Rectangle winnerBox = new Rectangle(size * .75, size * .5);
+        winnerBox.setFill(turnColor);
+        winnerPane.getChildren().add(winnerBox);
+
+        Text winnerMsg = new Text(winner + " WINS!");
+        winnerMsg.setFont(new Font(50));
+        winnerMsg.fillProperty().bind(winnerBox.fillProperty());
+
+        Rectangle flashingBox = new Rectangle(size * .75, size*.75);
+        FillTransition fade = new FillTransition();
+        fade.setAutoReverse(true);
+        fade.setDuration(Duration.millis(1000));
+        fade.setCycleCount(Timeline.INDEFINITE);
+        if(winner.equals("WHITE")){
+            fade.setFromValue(Color.WHITE);
+        }
+        else{
+            fade.setFromValue(Color.BLACK);
+        }
+        fade.setToValue(Color.rgb(143, 196, 157));
+        fade.setShape(flashingBox);
+        fade.play();
+        winnerPane.getChildren().add(flashingBox);
+        winnerPane.getChildren().add(winnerMsg);
+
+        super.getChildren().add(winnerPane);
+    }
+
 
     /**
      * Select a piece in a given cell
@@ -340,7 +385,13 @@ public class ChessBoard extends StackPane {
         int[] startPosition = piece.getPosition();
 
         if(board[endPosition[0]][endPosition[1]] != null){  // if space occupied
-            board[endPosition[0]][endPosition[1]].fadeOut();
+            // board[endPosition[0]][endPosition[1]].fadeOut();
+            if(board[endPosition[0]][endPosition[1]] == blackKing){
+                blackKing.kill();
+            }
+            else if(board[endPosition[0]][endPosition[1]] == whiteKing){
+                whiteKing.kill();
+            }
             pieceGrid.getChildren().remove(board[endPosition[0]][endPosition[1]].getImageView());
             board[endPosition[0]][endPosition[1]] = null;
         }
@@ -350,8 +401,35 @@ public class ChessBoard extends StackPane {
         board[startPosition[0]][startPosition[1]] = null;
         updateBoard();
         removeMoveHighlight();
+        changeTurn();
+        if(isWinner()){
+            displayWinner();
+        }
+    }
+
+    private void changeTurn(){
+        if(whiteTurn){
+            turnColor = Color.rgb(209, 201, 167);
+        }
+        else{
+            turnColor = Color.rgb(33, 23, 1);
+        }
         whiteTurn = !whiteTurn;
         isWhite = !isWhite;
+    }
+
+    private boolean isWinner(){
+        if(!whiteKing.isAlive()){
+            winner = "BLACK";
+        }
+        else if(!blackKing.isAlive()){
+            winner = "WHITE";
+        }
+        else{
+            winner = "NONE";
+        }
+        System.out.println(winner);
+        return(!winner.equals("NONE"));
     }
 
 

@@ -5,15 +5,25 @@ import java.util.ArrayList;
 public class King extends ChessPiece {
 
     private Moves moves;
+    private boolean alive;
 
     public King(int[] position, Color color){
         super("https://i.imgur.com/0NJgyIC.png", position, color);
         moves = new Moves(new int[]{1, 1, 1, 1, 1}, this.getColor());
+        alive = true;
     }
 
     public String toString(){
         this.generateName();
         return this.getName;
+    }
+
+    public boolean isAlive(){
+        return alive;
+    }
+
+    public void kill(){
+        alive = false;
     }
 
     public ArrayList<int[]> getMoves(ChessPiece[][] board){
