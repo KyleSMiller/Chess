@@ -350,6 +350,8 @@ public class ChessBoard extends StackPane {
         board[startPosition[0]][startPosition[1]] = null;
         updateBoard();
         removeMoveHighlight();
+        whiteTurn = !whiteTurn;
+        isWhite = !isWhite;
     }
 
 
