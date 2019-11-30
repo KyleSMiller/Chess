@@ -5,6 +5,7 @@ import ChessPieces.Bishop;
 import ChessPieces.Knight;
 import ChessPieces.Rook;
 import ChessPieces.Pawn;
+import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -56,6 +57,8 @@ public class ChessBoard extends StackPane {
         this.size = size;
         this.cellSize = size / COLUMNS;
 
+        this.board = FXCollections.observableArrayList();
+
         // add the checkered background, piece grid, and selections grid to the pane
         super.getChildren().add(this.background);
         Insets gridPadding = new Insets(5, 5, 5, 5);
@@ -63,6 +66,10 @@ public class ChessBoard extends StackPane {
         this.pieceGrid.setPadding(gridPadding);
         this.selectionGrid.setPadding(gridPadding);
         super.getChildren().add(pieceGrid);
+
+        createBoard();
+        addPieces();
+
         // create the selection rectangles
         this.selections = createSelections();
         for(int column = 0; column < COLUMNS; column++){
@@ -71,9 +78,6 @@ public class ChessBoard extends StackPane {
             }
         }
         super.getChildren().add(this.selectionGrid);
-
-        createBoard();
-        addPieces();
 
         isWhite = team;
     }
@@ -131,10 +135,11 @@ public class ChessBoard extends StackPane {
      * Create a blank chess board with no pieces
      */
     private void createBoard(){
-        for (int column = 0; column < this.board.size(); column++){
-            for (int row = 0; row < this.board.get(column).size(); row++){
+        for (int column = 0; column < COLUMNS; column++){
+            this.board.add(column, FXCollections.<ChessPiece>observableArrayList());
+            for (int row = 0; row < ROWS; row++){
                 // set up the array
-                this.board.get(column).set(row, null);
+                this.board.get(column).add(row, null);
                 // set up the background
                 Rectangle cell = new Rectangle(cellSize, cellSize);
                 if((column + row) % 2 == 0){
@@ -515,22 +520,29 @@ public class ChessBoard extends StackPane {
             }
         }
 
-        board.addListener((ListChangeListener<ObservableList<ChessPiece>>)(ov ->{
-            updateBoard();  // update the visual board when the array representation of pieces changes
-        }));
+        for(ObservableList<ChessPiece> column : board){
+            column.addListener((ListChangeListener<ChessPiece>)(ov ->{
+               updateBoard();
+            }));
+        }
+//        board.addListener((ListChangeListener<ObservableList<ChessPiece>>)(ov ->{
+//            updateBoard();  // update the visual board when the array representation of pieces changes
+//        }));
 
         new Thread(() -> {
-            if (isWhite) {  // white goes first
-                if(hasBeenUpdated) {
-                    sendBoard(convertBoardToString());
-                    hasBeenUpdated = false;
+            while(true) {
+                if (isWhite) {  // white goes first
+                    if (hasBeenUpdated) {
+                        sendBoard(convertBoardToString());
+                        hasBeenUpdated = false;
+                        board = receiveBoard();
+                    }
+                } else {
                     board = receiveBoard();
-                }
-            } else {
-                board = receiveBoard();
-                if(hasBeenUpdated) {
-                    sendBoard(convertBoardToString());
-                    hasBeenUpdated = false;
+                    if (hasBeenUpdated) {
+                        sendBoard(convertBoardToString());
+                        hasBeenUpdated = false;
+                    }
                 }
             }
         }).start();
