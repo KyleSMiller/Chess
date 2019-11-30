@@ -410,55 +410,53 @@ public class ChessBoard extends StackPane {
      * @return             the ChessPiece array
      */
     private ChessPiece[][] convertStringToBoard(String boardString) {
-        ChessPiece[][] board = new ChessPiece[COLUMNS][ROWS];
-        for (int column = 0; column < board.length; column++) {
-            for (int row = 0; row < board[column].length; row++) {
+        String[] pieces = boardString.split(",");
+        for (String piece : pieces) {
+            if (piece.equals("")) continue;  // skip blank index at end of split string
 
-                String[] pieces = boardString.split(",");
-                for (String piece : pieces) {
-                    if (piece.equals("")) continue;  // skip blank index at end of split string
-                    if (piece.equals("EMPTY")) {
-                        board[column][row] = null;
-                        continue;
-                    }  // open space
+            int column = Integer.parseInt(piece.split("@")[1].split("-")[0]);
+            int row = Integer.parseInt(piece.split("@")[1].split("-")[1]);
 
-                    String location = piece.split("@")[1];
-                    String stringColor = piece.split("@")[0].split("\\s+")[0];
-                    String type = piece.split("@")[0].split("\\s+")[1];
-                    ChessPiece.Color color;
+            if (piece.split("@")[0].equals("EMPTY")) {
+                board[column][row] = null;
+                continue;
+            }  // open space
 
-                    if (stringColor.equals("White")) {
-                        color = ChessPiece.Color.WHITE;
-                    } else {
-                        color = ChessPiece.Color.BLACK;
-                    }
+            String location = piece.split("@")[1];
+            String stringColor = piece.split("@")[0].split("\\s+")[0];
+            String type = piece.split("@")[0].split("\\s+")[1];
+            ChessPiece.Color color;
 
-                    switch (type) {
-                        case "King":
-                            board[column][row] = new King(new int[]{column, row}, color);
-                            break;
-                        case "Queen":
-                            board[column][row] = new Queen(new int[]{column, row}, color);
-                            break;
-                        case "Bishop":
-                            board[column][row] = new Bishop(new int[]{column, row}, color);
-                            break;
-                        case "Knight":
-                            board[column][row] = new Knight(new int[]{column, row}, color);
-                            break;
-                        case "Rook":
-                            board[column][row] = new Rook(new int[]{column, row}, color);
-                            break;
-                        case "Pawn":
-                            board[column][row] = new Pawn(new int[]{column, row}, color);
-                            break;
-                        default:
-                            board[column][row] = null;
-                    }
-                }
+            if (stringColor.equals("White")) {
+                color = ChessPiece.Color.WHITE;
+            } else {
+                color = ChessPiece.Color.BLACK;
+            }
+
+            switch (type) {
+                case "King":
+                    board[column][row] = new King(new int[]{column, row}, color);
+                    break;
+                case "Queen":
+                    board[column][row] = new Queen(new int[]{column, row}, color);
+                    break;
+                case "Bishop":
+                    board[column][row] = new Bishop(new int[]{column, row}, color);
+                    break;
+                case "Knight":
+                    board[column][row] = new Knight(new int[]{column, row}, color);
+                    break;
+                case "Rook":
+                    board[column][row] = new Rook(new int[]{column, row}, color);
+                    break;
+                case "Pawn":
+                    board[column][row] = new Pawn(new int[]{column, row}, color);
+                    break;
+                default:
+                    board[column][row] = null;
             }
         }
-        return board;
+    return board;
     }
 
     /**
@@ -511,14 +509,15 @@ public class ChessBoard extends StackPane {
         }
         else{
             new Thread(() -> {
-                while(playGame) {
+                while(true) {
                     if (isWhite) {  // white goes first
+                        System.out.println("what");
                         if(hasBeenUpdated) {
                             sendBoard(convertBoardToString());
                             hasBeenUpdated = false;
+                            board = receiveBoard();
+                            updateBoard();
                         }
-                        board = receiveBoard();
-                        updateBoard();
                     } else {
                         board = receiveBoard();
                         updateBoard();
