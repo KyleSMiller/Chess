@@ -515,23 +515,26 @@ public class ChessBoard extends StackPane {
             }
         }
 
-        board.addListener((ListChangeListener)(ov ->{
+        board.addListener((ListChangeListener<ObservableList<ChessPiece>>)(ov ->{
+            updateBoard();  // update the visual board when the array representation of pieces changes
+        }));
+
+        new Thread(() -> {
             if (isWhite) {  // white goes first
                 if(hasBeenUpdated) {
                     sendBoard(convertBoardToString());
                     hasBeenUpdated = false;
                     board = receiveBoard();
-                    updateBoard();
                 }
             } else {
                 board = receiveBoard();
-                updateBoard();
                 if(hasBeenUpdated) {
                     sendBoard(convertBoardToString());
                     hasBeenUpdated = false;
                 }
             }
-        }));
+        }).start();
+
     }
 
 }
