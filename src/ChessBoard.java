@@ -88,15 +88,18 @@ public class ChessBoard extends StackPane {
         gameLoop();
     }
 
-    private ServerSocket sv;
     private Socket socket;
+    private BufferedReader br;
+    private OutputStreamWriter out;
 
     public void openServer(int port){
         try{
-            this.sv = new ServerSocket(port);
+            ServerSocket sv = new ServerSocket(port);
             System.out.println("Waiting for opponent...");
-            this.socket = sv.accept();
+            socket = sv.accept();
             System.out.println("Opponent found");
+            br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            out = new OutputStreamWriter(socket.getOutputStream(), StandardCharsets.UTF_8);
         } catch(IOException e){
             System.out.println("Cannot open server on port " + port);
         }
@@ -107,6 +110,8 @@ public class ChessBoard extends StackPane {
             System.out.println("Connecting to opponent...");
             socket = new Socket(ip, port);
             System.out.println("Connected");
+            br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            out = new OutputStreamWriter(socket.getOutputStream(), StandardCharsets.UTF_8);
         } catch(IOException e){
             System.out.println("Cannot connect to server " + ip + ":" + port);
         }
@@ -403,7 +408,7 @@ public class ChessBoard extends StackPane {
         board.get(startPosition[0]).set(startPosition[1], null);
         updateBoard();
         removeMoveHighlight();
-        whiteTurn = !whiteTurn;
+        // whiteTurn = !whiteTurn;
         hasBeenUpdated = true;
     }
 
@@ -492,7 +497,7 @@ public class ChessBoard extends StackPane {
      * @param boardString  String representation of the current board
      */
     private void sendBoard(String boardString){
-        try(OutputStreamWriter out = new OutputStreamWriter(socket.getOutputStream(), StandardCharsets.UTF_8)){
+        try{
             out.write(boardString);
         } catch(IOException e){
             System.out.println("Cannot send JSON");
@@ -505,10 +510,10 @@ public class ChessBoard extends StackPane {
      */
     private ObservableList<ObservableList<ChessPiece>> receiveBoard(){
         try{
-            BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             return convertStringToBoard(br.readLine());
         } catch(IOException e){
-            System.out.println("Could not receive board from opponent");
+            System.out.println(e);
+            // System.out.println("Could not receive board from opponent");
         }
         return this.board;
     }
@@ -540,17 +545,21 @@ public class ChessBoard extends StackPane {
         new Thread(() -> {
             while(true) {
                 if (isWhite) {  // white goes first
-                    System.out.println();  // i do not even remotely understand it, but if this print statement is not here, it doesn't work
+                    int thing = 0;  // I do not even remotely understand it, but if this print statement is not here, it doesn't work
                     if (hasBeenUpdated) {
                         sendBoard(convertBoardToString());
                         hasBeenUpdated = false;
+                        whiteTurn = !whiteTurn;
                         board = receiveBoard();
+                        whiteTurn = !whiteTurn;
                     }
                 } else {
                     board = receiveBoard();
+                    whiteTurn = !whiteTurn;
                     if (hasBeenUpdated) {
                         sendBoard(convertBoardToString());
                         hasBeenUpdated = false;
+                        whiteTurn = !whiteTurn;
                     }
                 }
             }
