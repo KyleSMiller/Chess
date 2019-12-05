@@ -40,6 +40,11 @@ public abstract class ChessPiece {
         return color;
     }
 
+    public void setImage(String newImage){
+        this.image = newImage;
+        imageView = new ImageView(new Image(this.image));
+    }
+
     public String getName;
 
     public abstract ArrayList<int[]> getMoves(ChessPiece[][] board);

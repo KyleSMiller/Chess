@@ -11,6 +11,14 @@ public class King extends ChessPiece {
         super("https://i.imgur.com/0NJgyIC.png", position, color);
         moves = new Moves(new int[]{1, 1, 1, 1, 1}, this.getColor());
         alive = true;
+
+        if(this.getColor() == Color.BLACK){
+            this.setImage("https://i.imgur.com/WVgRjJe.png");
+        }
+        else{
+            this.setImage("https://i.imgur.com/Qp1iM5V.png");
+        }
+
     }
 
     public String toString(){

@@ -9,6 +9,14 @@ public class Bishop extends ChessPiece {
     public Bishop(int[] position, Color color){
         super("https://i.imgur.com/0NJgyIC.png", position, color);
         moves = new Moves(new int[]{0, 0, 0, -1, -1}, this.getColor());
+
+        if(this.getColor() == Color.BLACK){
+            this.setImage("https://i.imgur.com/TcMrkbQ.png");
+        }
+        else{
+            this.setImage("https://i.imgur.com/URqjsi9.png");
+        }
+
     }
 
     public String toString(){

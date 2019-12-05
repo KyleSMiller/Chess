@@ -9,6 +9,14 @@ public class Queen extends ChessPiece {
     public Queen(int[] position, Color color){
         super("https://i.imgur.com/0NJgyIC.png", position, color);
         moves = new Moves(new int[]{-1, -1, -1, -1, -1}, this.getColor());
+
+        if(this.getColor() == Color.BLACK){
+            this.setImage("https://i.imgur.com/4hEFtW3.png");
+        }
+        else{
+            this.setImage("https://i.imgur.com/mGuKf3j.png");
+        }
+
     }
 
     public String toString(){

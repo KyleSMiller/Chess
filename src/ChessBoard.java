@@ -1,19 +1,10 @@
-import ChessPieces.ChessPiece;
-import ChessPieces.King;
-import ChessPieces.Queen;
-import ChessPieces.Bishop;
-import ChessPieces.Knight;
-import ChessPieces.Rook;
-import ChessPieces.Pawn;
-import javafx.animation.FadeTransition;
+import ChessPieces.*;
 import javafx.animation.FillTransition;
 import javafx.animation.Timeline;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
@@ -21,8 +12,6 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
-import javax.naming.TimeLimitExceededException;
-import java.sql.Time;
 import java.util.ArrayList;
 
 public class ChessBoard extends StackPane {
@@ -284,7 +273,6 @@ public class ChessBoard extends StackPane {
      * Popup a box displaying the winner of the game
      */
     private void displayWinner(){
-        System.out.println("winner! " + winner);
         winnerPane.setAlignment(Pos.CENTER);
         Rectangle winnerBox = new Rectangle(size * .75, size * .5);
         winnerBox.setFill(turnColor);
@@ -428,7 +416,6 @@ public class ChessBoard extends StackPane {
         else{
             winner = "NONE";
         }
-        System.out.println(winner);
         return(!winner.equals("NONE"));
     }
 

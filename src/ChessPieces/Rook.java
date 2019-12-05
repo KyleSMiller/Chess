@@ -9,6 +9,14 @@ public class Rook extends ChessPiece{
     public Rook(int[] position, Color color){
         super("https://i.imgur.com/0NJgyIC.png", position, color);
         moves = new Moves(new int[]{-1, -1, -1, 0, 0}, this.getColor());
+
+        if(this.getColor() == Color.BLACK){
+            this.setImage("https://i.imgur.com/rjSqfZn.png");
+        }
+        else{
+            this.setImage("https://i.imgur.com/1CkPkVF.png");
+        }
+
     }
 
     public String toString(){

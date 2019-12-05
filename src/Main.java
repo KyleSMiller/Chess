@@ -1,8 +1,6 @@
-import Chat.ChatServer;
 import Chat.ChatWindow;
 import javafx.application.Application;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
@@ -20,6 +18,7 @@ public class Main extends Application {
         primaryStage.setResizable(false);
 
         ChessBoard chessBoard = new ChessBoard(500, true);
+        // chessBoard.openServer(7778);
         chessBoard.play();
 
 
@@ -37,14 +36,10 @@ public class Main extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
 
+//        new Thread(() -> {
+//            ChatServer chatServer = new ChatServer(7777);
+//            chatServer.runServer();
+//        }).start();
 
-
-//        new Thread() {
-//            public void run() {
-//                ChatServer chatServer = new ChatServer(7777);
-//                chatServer.runServer();
-//            }
-//        }.start();
     }
-
 }

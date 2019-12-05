@@ -10,6 +10,13 @@ public class Knight extends ChessPiece {
         super("https://i.imgur.com/0NJgyIC.png", position, color);
         moves = new Moves(updateDesiredMoves(), this.getColor());
 
+        if(this.getColor() == Color.BLACK){
+            this.setImage("https://i.imgur.com/tYl53iE.png");
+        }
+        else{
+            this.setImage("https://i.imgur.com/GWCdpkw.png");
+        }
+
     }
 
     public String toString(){

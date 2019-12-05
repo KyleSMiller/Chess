@@ -22,6 +22,14 @@ public class Pawn extends ChessPiece {
             starterMoves = new Moves(new int[]{0, 2, 0, 0, 0}, this.getColor());
             attacks = new Moves(new int[]{0, 0, 0, 0, 1}, this.getColor());
         }
+
+        if(this.getColor() == Color.BLACK){
+            this.setImage("https://i.imgur.com/CHMqrBg.png");
+        }
+        else{
+            this.setImage("https://i.imgur.com/AECadnb.png");
+        }
+
     }
 
     public String toString(){
